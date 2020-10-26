@@ -1,0 +1,195 @@
+{% extends 'new_base.html' %}
+
+{% block style %}
+.flip-card {
+
+width: 200px;
+height: 200px;
+perspective: 1000px;
+}
+
+.flip-card-inner {
+position: relative;
+width: 100%;
+height: 100%;
+text-align: center;
+transition: transform 0.6s;
+transform-style: preserve-3d;
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.flip-card:hover .flip-card-inner {
+transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+position: absolute;
+width: 100%;
+height: 100%;
+-webkit-backface-visibility: hidden;
+backface-visibility: hidden;
+}
+
+.flip-card-front {
+
+color: black;
+}
+
+.flip-card-back {
+
+color: white;
+transform: rotateY(180deg);
+justify-content: center;
+align-items: center;
+display: flex;
+}
+.grid-container{
+display: grid;
+grid-column-gap: 10px;
+grid-template-columns: auto auto auto auto auto;
+padding: 20px;
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+text-align: center;
+
+}
+.brand-link:hover{
+
+color:white;
+}
+h2 {
+color: white;
+text-shadow: 2px 2px 4px #000000;
+}
+
+h3 {
+color: white;
+text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+}
+.content-box {
+padding :20px;
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+.content-box-item {
+padding :10px;
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+margin-bottom:10px;
+}
+.card {
+box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+padding: 16px;
+text-align: center;
+background-color: #f1f1f1;
+}
+.column {
+float: left;
+width: 20%;
+padding: 0 10px;
+}
+
+/* Remove extra left and right margins, due to padding */
+.row {margin: 0 -5px;}
+
+/* Clear floats after the columns */
+.row:after {
+content: "";
+display: table;
+clear: both;
+}
+
+/* Responsive columns */
+@media screen and (max-width: 600px) {
+.column {
+width: 100%;
+display: block;
+margin-bottom: 20px;
+}
+}
+
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+
+<div class="w3-main w3-content w3-padding" style="max-width:1500px;margin-top:100px">
+    <div class="grid-container w3-center" id="brand">
+        {%for i in model | groupby('brand')%}
+        <div class="grid-item">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="{{url_for('static',filename='brand/{}.png'.format(i[0]))}}" alt="i[0]" style="width:100%">
+                    </div>
+                    <div class=" flip-card-back" style="background-color:
+                    {% if i[0] =='nike'%}#cb2d3e;{%endif%}
+                    {% if i[0] =='converse'%}#fc4a1a;{%endif%}
+                    {% if i[0] =='adidas'%}#6A82FB;{%endif%}
+                    {% if i[0] =='newbalance'%}#bdc3c7;{%endif%}
+                    {% if i[0] =='jordan'%}#DECBA4;{%endif%}">
+                        <a class="brand-link" href="{{url_for('model.view')}}" style="text-decoration:none; color:white;"><h2>{{i[0]}} : {{i[1] |length}}</h2></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <p>
+
+    <div class='content-box'>
+        <div class="content-box-item">
+            <h2>시장데이터총양</h2>
+            <a  style="text-decoration:none;" href="{{url_for('market._list')}}"><h3 style="display:inline">{{marketprice| length}}건</h3></a>
+        </div>
+
+
+        <div class="content-box-item">
+            <h2>거래량이 많은 모델 TOP 5</h2>
+            <div class="row">
+                <!--        내림차순 적용해야함-->
+                {% for i in (modelprice | groupby('code'))[:5]%}
+
+                {% for k in model %}
+                {%if k.code == i[0]%}
+                <div class="column">
+                    <div class="card">
+                        <div style="height:100px; display:inline; padding-top:30px"><a style="text-decoration:none" href="{{url_for('platform._list',code=k.code)}}">
+                            <h3>{{i[1] |length}}건</h3></a>
+                            <span class="font-weight-bold bg-danger text-white">프리미엄↑ : {{((i[1]|sum(attribute='price') // i[1] |length ) - k.retail_price) | price}}</span>
+                        </div>
+                        <img src="{{url_for('static',filename='crawling_data/model/{}'.format(k.img) )}}" style="max-height:200px;">
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endfor%}
+            </div>
+        </div>
+
+
+
+
+
+
+        {% for i in modelprice | groupby('code') %}
+        {% for k in model %}
+        {%if k.code == i[0]%}
+        {{k.subname}}<br>
+        프리미엄↑ :{{((i[1]|sum(attribute='price') // i[1] |length ) - k.retail_price) | price}}<br>
+        {% endif %}
+        {% endfor %}
+        {% for i in i[1]|groupby('size') %}
+        size : {{i[0]}} {{i[1] |count}}<br>
+        {% endfor %}
+        코드번호 : {{i[0]}}<br>
+        거래수 : {{i[1] |length}}<br>
+        평균가격 : {{ (i[1]|sum(attribute='price') // i[1] |length ) | price}}<br><br>
+
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock %}

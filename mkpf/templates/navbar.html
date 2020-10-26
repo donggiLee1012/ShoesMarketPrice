@@ -1,0 +1,41 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <a class="navbar-brand" href="{{ url_for('shoes.main') }}">DONGGI</a>
+    <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
+
+        <ul class="navbar-nav">
+
+            {% if g.user %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">{{ g.user.username }} (로그아웃)</a>
+            </li>
+            {% else %}
+            <li class="nav-item ">
+                <a class="nav-link" href="{{ url_for('auth.login') }}">로그인</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link" href="{{ url_for('auth.signup') }}">계정생성</a>
+            </li>
+            {% endif %}
+
+            {% if g.user.username == '1234' %}
+            <li class="nav-item">
+                 <a class="nav-link" href="{{url_for('market.search')}}">신발시장 크롤링</a>
+            </li>
+            <li class="nav-item">
+                 <a class="nav-link" href="{{url_for('model.create')}}">신발모델 생성</a>
+            </li>
+
+            {% endif %}
+            <li class="nav-item">
+                 <a class="nav-link" href="{{url_for('model.view')}}">모델 조회</a>
+            </li>
+            <li class="nav-item">
+                 <a class="nav-link" href="{{url_for('market._list')}}">시장시세조회</a>
+            </li>
+        </ul>
+    </div>
+</nav>
