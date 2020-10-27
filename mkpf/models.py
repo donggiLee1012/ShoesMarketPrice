@@ -29,6 +29,7 @@ class Platformprice(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     code = db.Column(db.String(30), db.ForeignKey('shoes.code',onupdate='CASCADE'))
     saleday = db.Column(db.DateTime(), nullable=False)
+    search_date = db.Column(db.DateTime())
     price = db.Column(db.Integer,default=0)
     size = db.Column(db.Integer,default=200)
     platform = db.Column(db.String(30))

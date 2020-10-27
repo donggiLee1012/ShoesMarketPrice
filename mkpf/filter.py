@@ -1,7 +1,29 @@
 
-def format_datetime(value,fmt='%Y년 %m월 %d일'):
+def format_datetime_detail(value,fmt='%Y년 %m월 %d일 %H:%M'):
+    return value.strftime(fmt)
+
+def format_datetime_hour(value,fmt='%Y년 %m월 %d일 %H시'):
+    return value.strftime(fmt)
+
+def format_datetime(value,fmt='%Y년 %m월 %d일 '):
     return value.strftime(fmt)
 # %H:%M
+
+
+
+def maxlength(value):
+    if len(value) < 23:
+        result = value
+    else:
+        result=value.replace(' ','')
+
+    return result
+
+def whattype(value):
+    return type(value)
+
+def integer(value):
+    return int(value)
 
 def exchange_rate(value):
     result =''

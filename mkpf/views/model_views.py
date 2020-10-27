@@ -1,4 +1,4 @@
-from flask import Blueprint, url_for, request, render_template,flash
+from flask import Blueprint, url_for, request, render_template,flash,g
 from werkzeug.utils import redirect,secure_filename
 from .. import db
 from mkpf.models import Shoes,Platformprice
@@ -7,6 +7,7 @@ from mkpf.initclass import *
 from mkpf.views.auth_views import login_required
 import urllib
 import urllib.request
+from datetime import datetime
 
 
 
@@ -76,6 +77,62 @@ def view():
     items = Shoes.query.order_by(Shoes.release_date.desc())
     return render_template('model/model_list.html',forms=forms,items=items)
 
+@bp.route('/modify/<int:shoes_id>', methods=('GET', 'POST'))
+@login_required
+def modify(shoes_id):
+    model = Shoes.query.get_or_404(shoes_id)
+
+    if g.user.username != '1234':
+        flash('수정권한이 없습니다')
+        return redirect(url_for('model.view'))
+    if request.method == 'POST':
+
+        form = ShoesModelCreateForm()
+        if form.validate_on_submit():
+            model_path = os.path.join(os.getcwd(), r'mkpf\static\shoesmodels')
+            if os.path.exists(model_path):
+                pass
+            else:
+                os.makedirs(model_path)
+
+            form.populate_obj(model)
+            uri = form.uri.data
+            img = form.img.data
+            if img == None:
+                filename = secure_filename(form.name.data) + '.jpg'
+                img_path = os.path.join(model_path, filename)
+                # urlretrieve(다운이미지경로,저장위치및이름)
+                urllib.request.urlretrieve(uri, img_path)
+
+            # 로컬일떄
+            else:
+                filename = secure_filename(img.filename)
+                if form.name.data in filename:
+                    pass
+                else:
+                    filename = secure_filename(form.name.data) + '.jpg'
+                img.save(os.path.join(model_path, filename))
+            model.img = filename
+
+            db.session.commit()
+            flash('수정완료')
+            return redirect(url_for('model.view'))
+    else:
+        form = ShoesModelCreateForm(obj=model)
+    return render_template('model/model_create.html', form=form)
+
+@bp.route('/delete/<int:shoes_id>')
+@login_required
+def delete(shoes_id):
+    question = Shoes.query.get_or_404(shoes_id)
+
+    if g.user.username != '1234':
+        flash('삭제권한이 없습니다')
+        return redirect(url_for('model.view'))
+    db.session.delete(question)
+    db.session.commit()
+    return redirect(url_for('model.view'))
+
 def process(code):
     xxblue_total = []
     xb = Xxblue(code)
@@ -83,6 +140,7 @@ def process(code):
     title,img_name = xb.search()
     tablenum = xb.element_generate()
     xb_obj = xb.parser()
+    search_date = datetime.now()
     xb.driver.quit()
 
 
@@ -110,7 +168,7 @@ def process(code):
                 else:
                     pass
             else : pass
-            xxblue_total.insert(0, Platformprice(code=code,saleday=saleday,price=price,size=size))
+            xxblue_total.insert(0, Platformprice(code=code,saleday=saleday,price=price,size=size,search_date=search_date))
             num +=1
 
         db.session.bulk_save_objects(xxblue_total)

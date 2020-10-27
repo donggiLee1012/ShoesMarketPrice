@@ -58,23 +58,23 @@ h1 {
   display: block;
 }
 
-/* Style the buttons */
-.btn {
-  border: none;
-  outline: none;
-  padding: 12px 16px;
-  background-color: white;
-  cursor: pointer;
-}
+<!--/* Style the buttons */-->
+<!--.btn {-->
+<!--  border: none;-->
+<!--  outline: none;-->
+<!--  padding: 12px 16px;-->
+<!--  background-color: white;-->
+<!--  cursor: pointer;-->
+<!--}-->
 
-.btn:hover {
-  background-color: #ddd;
-}
+<!--.btn:hover {-->
+<!--  background-color: #ddd;-->
+<!--}-->
 
-.btn.active {
-  background-color: #666;
-  color: white;
-}
+<!--.btn.active {-->
+<!--  background-color: #666;-->
+<!--  color: white;-->
+<!--}-->
 .overlay {
   position: absolute;
   top: 0;
@@ -108,6 +108,66 @@ h1 {
     font-size: 150%;
     color:white;
 }
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  vertical-align:middle;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
 
 
 
@@ -118,17 +178,26 @@ h1 {
 {% endblock %}
 {% include "success.html" %}
 {% block content %}
-    <div class="container">
-<!--        버튼-->
-        <div class="row justify-content-between my-3">
-            <div id="myBtnContainer">
-                <button class="btn btn-outline-secondary active" onclick="filterSelection('all')"> Show all</button>
-                {% for item in forms %}
-                <button class="btn btn-outline-secondary" onclick="filterSelection('{{item[0]}}')">{{item[0] | upper}}</button>
-                {% endfor %}
-            </div>
+<div class="container">
+    <!--        버튼-->
+    <div class="row justify-content-between my-3">
+        <div id="myBtnContainer">
+            <button class="btn btn-outline-secondary active" onclick="filterSelection('all')"> Show all</button>
+            {% for item in forms %}
+            <button class="btn btn-outline-secondary" onclick="filterSelection('{{item[0]}}')">{{item[0] | upper}}</button>
+            {% endfor %}
         </div>
-<!--        내용부분-->
+        <div>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+            <span class="change">DETAIL OFF</span><span class="change" style="display:none;">DETAIL ON</span>
+        </div>
+    </div>
+
+
+    <!--        내용부분-->
 
         <div class="row">
             {% for i in items %}
@@ -143,7 +212,28 @@ h1 {
                     {% if i.brand =='newbalance'%}#bdc3c7;{%endif%}
                     {% if i.brand =='jordan'%}#DECBA4;{%endif%}">
 
-                        <a href="{{ url_for('platform._list',code=i.code) }}" style="text-decoration: none; " class="text model-link">{{i.name | upper}}</a>
+                        <div class="change">
+                            <a href="{{ url_for('platform._list',code=i.code) }}" style="text-decoration: none; " class="text model-link">{{i.name | upper}}</a>
+                        </div>
+                        <div class="change" style="display:none; padding-top:30%; " >
+                            <table class="mx-auto">
+                                <tr class="table-active text-white"><td class="font-weight-bold">모델명:</td> <td>{{i.subname | maxstr}}</td></tr>
+                                <tr class="table-active text-white"><td class="font-weight-bold">출시일:</td> <td>{{i.release_date | datetime}}</td></tr>
+                                <tr class="table-active text-white"><td class="font-weight-bold">발매가:</td> <td>{{i.retail_price|price}}</td></tr>
+                            </table>
+                            {% if g.user.username == '1234' %}
+                            <div class="text-center" style="padding-top:5%;">
+                                <a href="{{ url_for('model.modify', shoes_id=i.id) }}" class=" btn btn-light text-warning">수정</a>
+                                <a href="{{ url_for('model.delete', shoes_id=i.id) }}" class="delete btn btn-light text-danger">삭제</a>
+                            </div>
+                            {% endif %}
+
+                        </div>
+
+
+
+
+
                     </div>
                 </div>
 
@@ -157,7 +247,13 @@ h1 {
 
 
 {% block script%}
-<script>
+<script type='text/javascript'>
+var check = $("input[type='checkbox']");
+check.click(function(){
+	$(".change").toggle();
+});
+
+
 filterSelection("all")
 function filterSelection(c) {
   var x, i;
@@ -200,5 +296,13 @@ for (var i = 0; i < btns.length; i++) {
 
   });
 }
+
+$(document).ready(function(){
+    $(".delete").on('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = $(this).data('uri');
+        }
+    });
+});
 </script>
 {% endblock%}

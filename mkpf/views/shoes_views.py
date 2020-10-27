@@ -17,6 +17,7 @@ from multiprocessing import Process
 
 bp = Blueprint('shoes',__name__,url_prefix='/shoes')
 
+
 @bp.route('/main/')
 def main():
     #modelprice = Structureprice.query.group_by(Structureprice.code).all()

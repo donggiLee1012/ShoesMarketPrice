@@ -40,7 +40,8 @@ class Driver:
         options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--start-fullscreen')
+        options.add_argument('window-size=1920x1080')
+        #options.add_argument('--start-fullscreen')
 
         self.driver = webdriver.Chrome(executable_path=Driver.__driverpath, options=options)
 

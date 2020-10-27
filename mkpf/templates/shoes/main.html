@@ -160,7 +160,7 @@ margin-bottom: 20px;
                             <h3>{{i[1] |length}}건</h3></a>
                             <span class="font-weight-bold bg-danger text-white">프리미엄↑ : {{((i[1]|sum(attribute='price') // i[1] |length ) - k.retail_price) | price}}</span>
                         </div>
-                        <img src="{{url_for('static',filename='crawling_data/model/{}'.format(k.img) )}}" style="max-height:200px;">
+                        <img src="{{url_for('static',filename='shoesmodels/{}'.format(k.img) )}}" style="max-height:200px;">
                     </div>
                 </div>
                 {% endif %}
