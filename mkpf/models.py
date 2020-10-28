@@ -3,8 +3,8 @@ from mkpf import db
 class Shoes(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(50),unique=True)
-    subname = db.Column(db.String(50), unique=True)
-    code = db.Column(db.String(30),unique=True)
+    subname = db.Column(db.String(50))
+    code = db.Column(db.String(30), unique=True)
     img = db.Column(db.Text())
     brand = db.Column(db.String(30),nullable=False)
     retail_price = db.Column(db.Integer,default=0)
