@@ -13,7 +13,10 @@ def format_datetime(value,fmt='%Y년 %m월 %d일 '):
 
 def maxlength(value):
     if len(value) < 23:
-        result = value
+        try:
+            result = value
+        except:
+            pass
     else:
         result=value.replace(' ','')
 
