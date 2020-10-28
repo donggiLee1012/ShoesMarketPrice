@@ -18,11 +18,12 @@ class Driver:
     if platform.system() == 'Windows' :
         __driverpath += r'/chromedriver.exe'
         imgpath = r'C:\projects\shoesprice\mkpf\static\crawling_data\img\{}'
-    elif platform.system() == 'Linux':
+    else:
+    # elif platform.system() == 'Linux':
+        print(platform.system())
         __driverpath += r'/chromedriver'
         imgpath = r'/home/multidong1017/projects/shoesprice/mkpf/static/crawling_data/img/{}'
-    else:
-        imgpath=''
+
 
     target = 'ddd'
 
