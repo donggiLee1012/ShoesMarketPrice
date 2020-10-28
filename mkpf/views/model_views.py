@@ -20,7 +20,7 @@ def create():
 
     if request.method == 'POST' and form.validate_on_submit():
 
-        model_path = os.path.join(os.getcwd(), r'mkpf\static\shoesmodels')
+        model_path = os.path.join(os.getcwd(), r'mkpf/static/shoesmodels')
         if os.path.exists(model_path):
             pass
         else:
@@ -89,7 +89,7 @@ def modify(shoes_id):
 
         form = ShoesModelCreateForm()
         if form.validate_on_submit():
-            model_path = os.path.join(os.getcwd(), r'mkpf\static\shoesmodels')
+            model_path = os.path.join(os.getcwd(), r'mkpf/static/shoesmodels')
             if os.path.exists(model_path):
                 pass
             else:
