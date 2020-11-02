@@ -45,7 +45,7 @@
             <td>{{ shoes_list.total - ((shoes_list.page-1) * shoes_list.per_page) - loop.index0 }}</td>
             <td>{{shoes.size}}</td>
             <td>{{shoes.condition}}</td>
-            <td><a href="{{url_for('market.detail',shoes_id=shoes.id)}}" >{{shoes.title}}</a></td>
+            <td>{{shoes.title}}</td>
             <td>{{shoes.price |price}}</td>
             <td>{{shoes.upload_date|datetime}}</td>
         </tr>

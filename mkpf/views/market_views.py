@@ -78,7 +78,7 @@ def process(query_txt,size,quantity):
     num =0
     #zip(title, condition, size, price, seller, uploadtime, uri, img)
     for title, condition, size, price, seller, uploadtime, uri, img in fs_obj:
-        fs.img_save(img,img[59:])
+        #fs.img_save(img,img[59:])
         total_list.insert(0, Marketprice(title=title, condition=condition, size=size, price=price,
                             seller=seller, upload_date=uploadtime,
                             uri=uri, search_query=query_txt, img=img))
