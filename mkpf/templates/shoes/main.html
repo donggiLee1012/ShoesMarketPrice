@@ -140,56 +140,83 @@ margin-bottom: 20px;
     <p>
 
     <div class='content-box'>
-        <div class="content-box-item">
+        <div class="content-box-item" >
             <h2>시장데이터총양</h2>
             <a  style="text-decoration:none;" href="{{url_for('market._list')}}"><h3 style="display:inline">{{marketprice| length}}건</h3></a>
         </div>
 
 
         <div class="content-box-item">
-            <h2>거래량이 많은 모델 TOP 5</h2>
-            <div class="row">
-                <!--        내림차순 적용해야함-->
-                {% for i in (modelprice | groupby('code'))[:5]%}
+            <h2 id="anchor">거래량이 많은 모델 TOP 5</h2>
 
-                {% for k in model %}
-                {%if k.code == i[0]%}
-                <div class="column">
-                    <div class="card">
-                        <div style="height:100px; display:inline; padding-top:30px"><a style="text-decoration:none" href="{{url_for('platform._list',code=k.code)}}">
-                            <h3>{{i[1] |length}}건</h3></a>
-                            <span class="font-weight-bold bg-danger text-white">프리미엄↑ : {{((i[1]|sum(attribute='price') // i[1] |length ) - k.retail_price) | price}}</span>
-                        </div>
-                        <img src="{{url_for('static',filename='shoesmodels/{}'.format(k.img) )}}" style="max-height:200px;">
-                    </div>
+            <div class="input-group" style="width:25%">
+                <div class="input-group-prepend">
+                    <label class="input-group-text text-danger" for="size-select">SIZE</label>
                 </div>
-                {% endif %}
+                <select class="custom-select" name="size" id="size-select">
+                    <optgroup label="Size Choose..."></optgroup>
+                    {% for item in form.size %}
+                    <option value={{item.data}} {% if sc == item.data|int %} selected {% endif%}>{{item.label}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="row">
+                {% for i in topfive %}
+
+                <div class="card" style="float: left; width: 20%;">
+
+                        <img class="card-img-top" src="{{ url_for('static',filename='shoesmodels/'+i.img )}}" style='max-height:166.47px; width:100%;' />
+
+                    <a href="{{url_for('model.view',_anchor=i.code)}}">
+                    <div class="card-img-overlay">
+
+                    </div>
+                        </a>
+                    <a href="{{url_for('platform._list',code=i.code)}}" style="text-decoration:none;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item list-group-item-success"><span class="font-weight-bold text-dark">사이즈 : </span><span class="badge badge-pill badge-light" style="font-size: medium">{% if sc !='default'%}{{sc}}{% else %}기본{% endif%}</span></li>
+                            <li class="list-group-item list-group-item-info"><span class="font-weight-bold text-dark">거래량 : </span><span class="badge badge-pill badge-light" style="font-size: medium">
+                            {% if sc !='default'%}
+                            {{detail[loop.index0][sc]['count']}}건
+                            {% else %}
+                            {{i.platform_price_set | length}}건
+                            {% endif%}
+                            </span></li>
+                            <li class="list-group-item list-group-item-primary"><span class="font-weight-bold text-dark">평균시세 : </span><span class="badge badge-pill badge-light" style="font-size: medium">
+                        {% if sc !='default'%}
+                            {{detail[loop.index0][sc]['avg'] |price}}
+                            {% else %}
+                            {{ (i.platform_price_set  | sum(attribute='price') // (i.platform_price_set | length)) | price}}
+                            {% endif%}
+                        </span></li>
+                            <li class="list-group-item list-group-item-warning"><span class="font-weight-bold text-dark">평균차익 : </span><span class="badge badge-pill badge-light " style="font-size: medium">
+                            {% if sc !='default'%}
+                            {{ (detail[loop.index0][sc]['avg'] - i.retail_price) |price}}
+                            {% else %}
+                            {{ (i.platform_price_set  | sum(attribute='price') // (i.platform_price_set | length) -i.retail_price ) | price}}
+                            {% endif%}
+                        </span></li>
+                        </ul>
+                    </a>
+                </div>
                 {% endfor %}
-                {% endfor%}
             </div>
         </div>
-
-
-
-
-
-
-        {% for i in modelprice | groupby('code') %}
-        {% for k in model %}
-        {%if k.code == i[0]%}
-        {{k.subname}}<br>
-        프리미엄↑ :{{((i[1]|sum(attribute='price') // i[1] |length ) - k.retail_price) | price}}<br>
-        {% endif %}
-        {% endfor %}
-        {% for i in i[1]|groupby('size') %}
-        size : {{i[0]}} {{i[1] |count}}<br>
-        {% endfor %}
-        코드번호 : {{i[0]}}<br>
-        거래수 : {{i[1] |length}}<br>
-        평균가격 : {{ (i[1]|sum(attribute='price') // i[1] |length ) | price}}<br><br>
-
-        {% endfor %}
-
     </div>
 </div>
+<form id="sizeform" method="get" action="{{ url_for('shoes.main',_anchor='anchor') }}">
+    <input type="hidden" id="sc" name="sc" value="{{ sc }}">
+</form>
+{% endblock %}
+
+{% block script%}
+
+<script type="text/javascript">
+ $("#size-select").on('change', function() {
+        $("#sc").val($(this).val());
+        $("#sizeform").submit();
+    });
+
+</script>
 {% endblock %}

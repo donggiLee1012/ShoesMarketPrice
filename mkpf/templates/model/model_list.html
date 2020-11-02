@@ -2,60 +2,60 @@
 {% block style %}
 
 * {
-  box-sizing: border-box;
+box-sizing: border-box;
 }
 
 body {
-  background-color: #f1f1f1;
-  padding: 20px;
-  font-family: Arial;
+background-color: #f1f1f1;
+padding: 20px;
+font-family: Arial;
 }
 
 /* Center website */
 .main {
-  max-width: 1000px;
-  margin: auto;
+max-width: 1000px;
+margin: auto;
 }
 
 h1 {
-  font-size: 50px;
-  word-break: break-all;
+font-size: 50px;
+word-break: break-all;
 }
 
 .row {
-  margin: 10px -16px;
+margin: 10px -16px;
 }
 
 /* Add padding BETWEEN each column */
 .row,
 .row > .column {
-  padding: 8px;
+padding: 8px;
 }
 
 /* Create three equal columns that floats next to each other */
 .column {
-  float: left;
-  width: 33.33%;
-  display: none; /* Hide all elements by default */
+float: left;
+width: 33.33%;
+display: none; /* Hide all elements by default */
 }
 
 /* Clear floats after rows */
 .row:after {
-  content: "";
-  display: table;
-  clear: both;
+content: "";
+display: table;
+clear: both;
 }
 
 /* Content */
 .content {
-  background-color: white;
-  position: relative;
-  padding: 10px;
+background-color: white;
+position: relative;
+padding: 10px;
 }
 
 /* The "show" class is added to the filtered elements */
 .show {
-  display: block;
+display: block;
 }
 
 <!--/* Style the buttons */-->
@@ -76,45 +76,45 @@ h1 {
 <!--  color: white;-->
 <!--}-->
 .overlay {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  opacity: 0;
-  transition: .7s ease;
+position: absolute;
+top: 0;
+bottom: 0;
+left: 0;
+right: 0;
+height: 100%;
+width: 100%;
+opacity: 0;
+transition: .7s ease;
 
 }
 
 .content:hover .overlay {
-  opacity: 1;
+opacity: 1;
 
 }
 .text{
-  color: white;
-  font-size: 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  text-align: center;
+color: white;
+font-size: 20px;
+position: absolute;
+top: 50%;
+left: 50%;
+-webkit-transform: translate(-50%, -50%);
+-ms-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
+text-align: center;
 
 }
 .model-link:hover {
-    font-size: 150%;
-    color:white;
+font-size: 150%;
+color:white;
 }
 /* The switch - the box around the slider */
 .switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-  vertical-align:middle;
+position: relative;
+display: inline-block;
+width: 60px;
+height: 34px;
+vertical-align:middle;
 }
 
 /* Hide default HTML checkbox */
@@ -122,50 +122,50 @@ h1 {
 
 /* The slider */
 .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+-webkit-transition: .4s;
+transition: .4s;
 }
 
 .slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+position: absolute;
+content: "";
+height: 26px;
+width: 26px;
+left: 4px;
+bottom: 4px;
+background-color: white;
+-webkit-transition: .4s;
+transition: .4s;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+background-color: #2196F3;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+box-shadow: 0 0 1px #2196F3;
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+-webkit-transform: translateX(26px);
+-ms-transform: translateX(26px);
+transform: translateX(26px);
 }
 
 /* Rounded sliders */
 .slider.round {
-  border-radius: 34px;
+border-radius: 34px;
 }
 
 .slider.round:before {
-  border-radius: 50%;
+border-radius: 50%;
 }
 
 
@@ -199,48 +199,42 @@ input:checked + .slider:before {
 
     <!--        내용부분-->
 
-        <div class="row">
-            {% for i in items %}
-            <div class="column {{i.brand}}">
-                <div class="content">
-                    <img src="{{ url_for('static',filename='shoesmodels/'+i.img )}}" style='max-height:226.3px; width:100%;' />
-                    <div class="p-3 mb-2 text-secondary text-center">{{i.name}}</div>
-                    <div class="overlay" style="background-color:
+    <div class="row">
+        {% for i in items %}
+        <div class="column {{i.brand}}">
+            <div class="content" id="{{i.code}}">
+                <img src="{{ url_for('static',filename='shoesmodels/'+i.img )}}" style='max-height:226.3px; width:100%;' />
+                <div class="p-3 mb-2 text-secondary text-center">{{i.name}}</div>
+                <div class="overlay" style="background-color:
                     {% if i.brand =='nike'%}#cb2d3e;{%endif%}
                     {% if i.brand =='converse'%}#fc4a1a;{%endif%}
                     {% if i.brand =='adidas'%}#6A82FB;{%endif%}
                     {% if i.brand =='newbalance'%}#bdc3c7;{%endif%}
                     {% if i.brand =='jordan'%}#DECBA4;{%endif%}">
 
-                        <div class="change">
-                            <a href="{{ url_for('platform._list',code=i.code) }}" style="text-decoration: none; " class="text model-link">{{i.name | upper}}</a>
+                    <div class="change">
+                        <a href="{{ url_for('platform._list',code=i.code) }}" style="text-decoration: none; " class="text model-link">{{i.name | upper}}</a>
+                    </div>
+                    <div class="change" style="display:none; padding-top:30%; " >
+                        <table class="mx-auto">
+                            <tr class="table-active text-white"><td class="font-weight-bold">모델명:</td> <td>{{i.subname | maxstr}}</td></tr>
+                            <tr class="table-active text-white"><td class="font-weight-bold">출시일:</td> <td>{{i.release_date | datetime}}</td></tr>
+                            <tr class="table-active text-white"><td class="font-weight-bold">발매가:</td> <td>{{i.retail_price|price}}</td></tr>
+                        </table>
+                        {% if g.user.username == '1234' %}
+                        <div class="text-center" style="padding-top:5%;">
+                            <a href="{{ url_for('model.modify', shoes_id=i.id) }}" class=" btn btn-light text-warning">수정</a>
+                            <a href="{{ url_for('model.delete', shoes_id=i.id) }}" class="delete btn btn-light text-danger">삭제</a>
                         </div>
-                        <div class="change" style="display:none; padding-top:30%; " >
-                            <table class="mx-auto">
-                                <tr class="table-active text-white"><td class="font-weight-bold">모델명:</td> <td>{{i.subname | maxstr}}</td></tr>
-                                <tr class="table-active text-white"><td class="font-weight-bold">출시일:</td> <td>{{i.release_date | datetime}}</td></tr>
-                                <tr class="table-active text-white"><td class="font-weight-bold">발매가:</td> <td>{{i.retail_price|price}}</td></tr>
-                            </table>
-                            {% if g.user.username == '1234' %}
-                            <div class="text-center" style="padding-top:5%;">
-                                <a href="{{ url_for('model.modify', shoes_id=i.id) }}" class=" btn btn-light text-warning">수정</a>
-                                <a href="{{ url_for('model.delete', shoes_id=i.id) }}" class="delete btn btn-light text-danger">삭제</a>
-                            </div>
-                            {% endif %}
-
-                        </div>
-
-
-
-
-
+                        {% endif %}
                     </div>
                 </div>
-
             </div>
-            {% endfor %}
+
         </div>
+        {% endfor %}
     </div>
+</div>
 
 
 {% endblock %}

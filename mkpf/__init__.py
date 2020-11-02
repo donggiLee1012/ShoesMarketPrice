@@ -41,6 +41,7 @@ def create_app():
     app.jinja_env.filters['int'] = integer
     app.jinja_env.filters['maxstr'] = maxlength
 
+
     # 오류페이지
     app.register_error_handler(404,page_not_found)
     app.register_error_handler(500, server_error)

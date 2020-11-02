@@ -1,0 +1,41 @@
+<h1>
+    {{sizedict}}
+</h1>
+
+<h2>top5모델</h2>
+{{model}}
+<br><br><br>
+{% for i in model %}
+    {{i}}
+    {{i.code}}
+    {{i.subname}}
+    {{i.platform_price_set | length}}
+    <br>사이즈  평균가격  거래량<br>
+    {% for size,items in i.platform_price_set | groupby('size')%}
+        {{size}} : {{ ( (items | sum(attribute='price')) // (items | length) ) | price }} {{items | length}}건<br>
+    {% endfor %}
+    <br>
+    <br>
+{% endfor %}
+
+<h2>groupby code</h2>
+{% for code, items in sizecode | groupby('code')%}
+{{code}}<br>
+{{items|sum(2)}}<br><br>
+{% endfor%}
+<br><br><br>
+
+{% for i in sizedict %}
+{{i}} {{sizedict[i] | price}}<br>
+{% endfor %}
+<br>
+{% for i in sizecode %}
+{{i.code}}<br>
+{{i.size}}
+{{i.sizecount}}건
+{{i.avg | price}}
+
+<br>
+{% endfor%}
+
+

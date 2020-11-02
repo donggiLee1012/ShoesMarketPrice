@@ -16,7 +16,7 @@ class UserLoginForm(FlaskForm):
     password = PasswordField('비밀번호',validators=[DataRequired()])
 
 cho =[('','선택안함')]
-for i in range(220,315,5):
+for i in range(210,315,5):
     cho.append((str(i),str(i)+'mm'))
 
 class SearchShoes(FlaskForm):
