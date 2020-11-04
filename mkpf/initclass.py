@@ -9,7 +9,8 @@ import math
 import urllib
 import urllib.request
 import platform
-
+import random
+from fake_useragent import UserAgent
 
 
 class Driver:
@@ -31,20 +32,11 @@ class Driver:
     dirname = 'hi'
 
 
+
     def __init__(self,query_txt='',size ='',quantity =100):
         self.query_txt = query_txt
         self.size = size
         self.quantity = quantity
-
-        # windows, linux ok
-        options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('window-size=1920x1080')
-        #options.add_argument('--start-fullscreen')
-
-        self.driver = webdriver.Chrome(executable_path=Driver.__driverpath, options=options)
 
         self.imgpath = Driver.imgpath.format(self.dirname)
         if os.path.exists(self.imgpath):
@@ -53,6 +45,22 @@ class Driver:
             os.makedirs(self.imgpath)
 
     def start(self):
+        # windows, linux ok
+
+        # fake-useragent
+        ua = UserAgent(verify_ssl=False)
+        useragent = ua.random
+
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('window-size=1920x1080')
+        options.add_argument("lang=ko_KR")
+        options.add_argument(f'user-agent={useragent}')
+        # options.add_argument('--start-fullscreen')
+
+        self.driver = webdriver.Chrome(executable_path=Driver.__driverpath, options=options)
         self.driver.implicitly_wait(10)
         self.driver.get(self.target)
 
@@ -363,5 +371,113 @@ class Bgjt(Driver):
 
         return zip(title, condition, size, price, seller, uploadtime, uri, img)
 
-if __name__ =='__main__':
-    print(platform.system())
+class Nikemania(Driver):
+    target = 'https://cafe.naver.com/sssw'
+    dirname = 'nikemania'
+
+    brands = ['jordan', 'nike', 'adidas', 'other']
+
+    def search(self, brand):
+        t.sleep(random.randint(2, 4))
+        if brand == 'jordan':
+            self.driver.find_element_by_css_selector('#menuLink369').click()
+        elif brand == 'nike':
+            self.driver.find_element_by_css_selector('#menuLink371').click()
+        elif brand == 'adidas':
+            self.driver.find_element_by_css_selector('#menuLink448').click()
+        elif brand == 'other':
+            self.driver.find_element_by_css_selector('#menuLink373').click()
+        else:
+            pass
+        t.sleep(random.randint(2, 4))
+        # iframe 접속
+        self.driver.switch_to.frame('cafe_main')
+
+    def soup_make(self,border):
+
+        for j in range(math.ceil(self.quantity / 20)):
+            t.sleep(random.randint(2, 6))
+            html = self.driver.page_source
+            soup = BeautifulSoup(html, 'html.parser')
+            t.sleep(random.randint(2, 6))
+
+            border_list = soup.select('.article-album-sub > li')
+            for index, i in enumerate(border_list):
+
+                upload = i.select('dl > .date_num > .date')[0].text.strip()
+                if ':' in upload:
+                    upload = datetime.now().date().__str__()
+                else:
+                    upload = upload[:-1]
+
+                border[index + (j * 20)] = {'title': i.select('dl > dt span')[0].text,
+                                            'name': i.select('dl > .p-nick .p-nick')[0].text,
+                                            'url': r'https://cafe.naver.com' + i.find('a')['href'],
+                                            'date': upload}
+                if len(border) == self.quantity:
+                    break
+            try:
+                self.driver.find_elements_by_css_selector('.prev-next > a')[j + 1].click()
+            except:
+                break
+
+        return border
+
+    def parser(self,border):
+        # 리스트 번호란기준으로 정규표현식으로 뽑음
+        # 4. 판매제품명
+        # 5. 사이즈
+        # 6. 제품상태
+        # 7. 가격
+        # 8. 거래방법
+        p = re.compile(r'^(\d[.])\s?(.*:)(.*)')
+
+        for border_att in border:
+
+            self.driver.get(border[border_att]['url'])
+            t.sleep(random.randint(1, 5))
+            self.driver.switch_to.frame('cafe_main')
+            t.sleep(random.randint(1, 5))
+            html = self.driver.page_source
+            soup = BeautifulSoup(html, 'html.parser')
+            t.sleep(random.randint(1, 3))
+            content_list = soup.select('.se-module p')
+
+            ct_title=''
+            ct_size=''
+            ct_condition=''
+            ct_price=''
+            for i in content_list:
+                if p.search(i.text):
+                    # 4. 판매제품명
+                    if '4' in p.search(i.text).group(1):
+                        ct_title = p.search(i.text).group(3).strip()
+                    # 5. 사이즈
+                    elif '5' in p.search(i.text).group(1):
+                        ct_size = p.search(i.text).group(3).strip()
+                    # 6. 제품상태
+                    elif '6' in p.search(i.text).group(1):
+                        ct_condition = p.search(i.text).group(3).strip()
+                    # 7. 가격
+                    elif '7' in p.search(i.text).group(1):
+                        ct_price = p.search(i.text).group(3).strip()
+                    else:
+                        pass
+                else:
+                    pass
+
+            border[border_att]['content'] = {'title': ct_title, 'size': ct_size, 'condition': ct_condition,
+                                             'price': ct_price}
+
+            print(border_att + 1, ' 번 완료')
+        return border
+
+    def logics(self, brand, final_dict):
+        border = dict()
+        self.start()
+        self.search(brand)
+        border = self.soup_make(border)
+        border = self.parser(border)
+        self.driver.quit()
+
+        final_dict[brand] = border
