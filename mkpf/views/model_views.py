@@ -31,40 +31,47 @@ def create():
         brand = form.brand.data
         code = form.code.data
         color = form.colorway.data
+        keyword = form.keyword.data
         releasedate = form.releasedate.data
         uri=form.uri.data
         img = form.img.data
 
-        # 파일저장
-        # 경로일때
-        if img == None:
-            filename = secure_filename(name)+'.jpg'
-            img_path = os.path.join(model_path, filename)
-            #urlretrieve(다운이미지경로,저장위치및이름)
-            urllib.request.urlretrieve(uri, img_path)
-
-        # 로컬일떄
-        else:
-            filename = secure_filename(img.filename)
-            if name in filename :
-                pass
-            else:
+        exists_code = Shoes.query.filter_by(code=code).first()
+        exists_name = Shoes.query.filter_by(name=name).first()
+        # 기존의 만들어둔 모델이있는지 확인
+        if not exists_code and not exists_name :
+            # 파일저장
+            # 경로일때
+            if img == None:
                 filename = secure_filename(name)+'.jpg'
-            img.save(os.path.join(model_path, filename))
+                img_path = os.path.join(model_path, filename)
+                #urlretrieve(다운이미지경로,저장위치및이름)
+                urllib.request.urlretrieve(uri, img_path)
 
-        model = Shoes(code=code, img=filename, brand=brand,release_date=releasedate,name=name,colorway=color,retail_price=price)
-        db.session.add(model)
-        db.session.commit()
-        howmany = process(code)
+            # 로컬일떄
+            else:
+                filename = secure_filename(img.filename)
+                if name in filename :
+                    pass
+                else:
+                    filename = secure_filename(name)+'.jpg'
+                img.save(os.path.join(model_path, filename))
 
-        flash(howmany)
+            model = Shoes(code=code, img=filename, brand=brand,release_date=releasedate,name=name,colorway=color,retail_price=price,keyword=keyword)
+            db.session.add(model)
+            db.session.commit()
+            howmany = process(code)
 
-        return redirect(url_for('model.view'))
+            flash(howmany)
 
+            return redirect(url_for('model.view'))
+        else:
+            if exists_code :
+                flash('이미 존재하는 모델넘버입니다.')
+            else:
+                flash('이미 존재하는 모델이름입니다.')
 
-
-    else:
-        return render_template('model/model_create.html',form=form,loading=loading)
+    return render_template('model/model_create.html',form=form,loading=loading)
 
 
 
@@ -133,6 +140,12 @@ def delete(shoes_id):
     db.session.commit()
     return redirect(url_for('model.view'))
 
+@bp.route('/keyword/')
+@login_required
+def keyword():
+    return render_template('model/model_keyword.html')
+
+
 def process(code):
     xxblue_total = []
     xb = Xxblue(code)
@@ -143,7 +156,7 @@ def process(code):
     search_date = datetime.now()
     xb.driver.quit()
 
-
+    print('subname:',title)
     # 모델 서브네임이없을 경우 추가한다.
     shoesmodel = Shoes.query.filter(Shoes.code ==code).first()
     if shoesmodel.subname == None:

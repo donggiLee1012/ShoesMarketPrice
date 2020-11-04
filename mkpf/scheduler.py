@@ -9,12 +9,17 @@ import sys
 
 if __name__ =='__main__':
 
+    BASE_DIR = os.path.join(os.path.join(os.path.pardir, 'mkpf.db'))
+
     if __package__ is None:
         sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         from initclass import Nikemania
     else:
         from .initclass import Nikemania
         pass
+
+    db = sqlite3.connect(BASE_DIR)
+    cursor = db.cursor()
 
     mangers = Manager()
     final_dict = mangers.dict()
@@ -32,7 +37,7 @@ if __name__ =='__main__':
         proc.join()
 
     save = os.path.dirname(os.path.dirname(namaes.imgpath))
-    jsonfile = os.path.join(save,'nikemania')
+    jsonfile = os.path.join(save,f'nikemania{namaes.time_marker}')
 
     with open(f"{jsonfile}.json", "w", encoding='utf-8') as json_file:
         json.dump(final_dict.copy(), json_file, ensure_ascii=False)

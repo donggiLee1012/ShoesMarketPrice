@@ -10,6 +10,7 @@ class Shoes(db.Model):
     retail_price = db.Column(db.Integer,default=0)
     release_date = db.Column(db.DateTime())
     colorway = db.Column(db.Text())
+    keyword = db.Column(db.Text())
 
 class Marketprice(db.Model):
     id = db.Column(db.Integer,primary_key=True)

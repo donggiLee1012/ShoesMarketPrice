@@ -40,7 +40,7 @@ div#loading {
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label" for="name">제품명을 입력하세요 : </label>
                 <div class="col-sm-7">
-                <input class="form-control" type="text" name="name" id="name" value="{{ form.name.data or ''}}">
+                <input class="form-control" type="text" name="name" placeholder="Jordan 5 Retro OFF-WHITE Sail or 327 Grey ...." id="name" value="{{ form.name.data or ''}}">
                 </div>
             </div>
             <!--    제품코드    -->
@@ -71,6 +71,14 @@ div#loading {
                 <input class="form-control" type="date" name="releasedate" id="releasedate" value="{{ form.releasedate.data or '2020-10-12'}}">
                 </div>
             </div>
+            <!--    키워드     -->
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label" for="keyword">키워드를 입력하세요 : </label>
+                <div class="col-sm-7">
+                <input class="form-control" type="text" name="keyword" placeholder="현재는 키워드 1개만... 3자이상" id="keyword" value="{{ form.keyword.data or ''}}">
+                </div>
+            </div>
+            <!--    이미지선택     -->
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label" for="rad">이미지 입력방식을 선택하세요 :</label>
                 <div class="col-sm-7" id="rad">
@@ -81,7 +89,6 @@ div#loading {
                 </div>
             </div>
             <!--    이미지     -->
-
             <div class="form-group row" id="select_path">
                 <label class="col-sm-4 col-form-label" for="uri">이미지 주소를 입력하세요 : </label>
                 <div class="col-sm-7">
@@ -89,7 +96,7 @@ div#loading {
                 </div>
             </div>
 
-            <div class="form-group row" id="select_local">
+            <div class="form-group row" id="select_local" style="display:none;">
                 <label class="col-sm-4 col-form-label" for="img">로컬 이미지를 선택하세요 : </label>
                 <div class="custom-file col-sm-7" id="select_hidden">
                     <input class="custom-file-input " type="file" accept="image/*" name="img" id="img" onchange="loadFile(event)">

@@ -28,7 +28,7 @@ class Driver:
 
     target = 'ddd'
 
-    time_marker = datetime.now()
+    time_marker = datetime.now().strftime('%y%m%d_%H')
     dirname = 'hi'
 
 
@@ -216,8 +216,8 @@ class Xxblue(Driver):
             print('검색결과없음')
 
         self.driver.implicitly_wait(10)
-        title=self.driver.find_element_by_css_selector('.product-subname').text
-        img_name = self.driver.find_element_by_css_selector('.product-name').text.replace(' ','').lower()
+        title=self.driver.find_element_by_css_selector('.product-detail-container > .product-subname').text
+        img_name = self.driver.find_element_by_css_selector('.product-detail-container > .product-name').text.replace(' ','').lower()
         # 입찰 현황 더보기란 클릭
         # or driver.find_element_by_id('latestTransactionMore').click()
         self.driver.find_element_by_id('asknMore').click()
