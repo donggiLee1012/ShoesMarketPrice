@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+{% block style %}
+
+* {
+box-sizing: border-box;
+}
+
+body {
+background-color: #f1f1f1;
+padding: 20px;
+font-family: Arial;
+}
+
+/* Center website */
+.main {
+max-width: 1000px;
+margin: auto;
+}
+
+h1 {
+font-size: 50px;
+word-break: break-all;
+}
+
+.row {
+margin: 10px -16px;
+}
+
+/* Add padding BETWEEN each column */
+.row,
+.row > .column {
+padding: 8px;
+}
+
+/* Create three equal columns that floats next to each other */
+.column {
+float: left;
+width: 33.33%;
+display: none; /* Hide all elements by default */
+}
+
+/* Clear floats after rows */
+.row:after {
+content: "";
+display: table;
+clear: both;
+}
+
+/* Content */
+.content {
+background-color: white;
+position: relative;
+padding: 10px;
+}
+
+/* The "show" class is added to the filtered elements */
+.show {
+display: block;
+}
+
+<!--/* Style the buttons */-->
+<!--.btn {-->
+<!--  border: none;-->
+<!--  outline: none;-->
+<!--  padding: 12px 16px;-->
+<!--  background-color: white;-->
+<!--  cursor: pointer;-->
+<!--}-->
+
+<!--.btn:hover {-->
+<!--  background-color: #ddd;-->
+<!--}-->
+
+<!--.btn.active {-->
+<!--  background-color: #666;-->
+<!--  color: white;-->
+<!--}-->
+.overlay {
+position: absolute;
+top: 0;
+bottom: 0;
+left: 0;
+right: 0;
+height: 100%;
+width: 100%;
+opacity: 0;
+transition: .7s ease;
+
+}
+
+.content:hover .overlay {
+opacity: 1;
+
+}
+.text{
+color: white;
+font-size: 20px;
+position: absolute;
+top: 50%;
+left: 50%;
+-webkit-transform: translate(-50%, -50%);
+-ms-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
+text-align: center;
+
+}
+.model-link:hover {
+font-size: 150%;
+color:white;
+}
+/* The switch - the box around the slider */
+.switch {
+position: relative;
+display: inline-block;
+width: 60px;
+height: 34px;
+vertical-align:middle;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+-webkit-transition: .4s;
+transition: .4s;
+}
+
+.slider:before {
+position: absolute;
+content: "";
+height: 26px;
+width: 26px;
+left: 4px;
+bottom: 4px;
+background-color: white;
+-webkit-transition: .4s;
+transition: .4s;
+}
+
+input:checked + .slider {
+background-color: #2196F3;
+}
+
+input:focus + .slider {
+box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+-webkit-transform: translateX(26px);
+-ms-transform: translateX(26px);
+transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+border-radius: 34px;
+}
+
+.slider.round:before {
+border-radius: 50%;
+}
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+{% endblock %}
+{% include "success.html" %}
+{% block content %}
+<div class="container">
+    <!--        버튼-->
+    <div class="row justify-content-between my-3">
+        <div id="myBtnContainer">
+            <button class="btn btn-outline-secondary active" onclick="filterSelection('all')"> Show all</button>
+            {% for item in forms %}
+            <button class="btn btn-outline-secondary" onclick="filterSelection('{{item[0]}}')">{{item[0] | upper}}</button>
+            {% endfor %}
+        </div>
+        <div>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+            <span class="change">DETAIL OFF</span><span class="change" style="display:none;">DETAIL ON</span>
+        </div>
+    </div>
+
+
+    <!--        내용부분-->
+
+    <div class="row">
+        {% for i in items %}
+        <div class="column {{i.brand}}">
+            <div class="content" id="{{i.code}}">
+                <img src="{{ url_for('static',filename='shoesmodels/'+i.img )}}" style='max-height:226.3px; width:100%;' />
+                <div class="p-3 mb-2 text-secondary text-center">{{i.name}}</div>
+                <div class="overlay" style="background-color:
+                    {% if i.brand =='nike'%}#cb2d3e;{%endif%}
+                    {% if i.brand =='converse'%}#fc4a1a;{%endif%}
+                    {% if i.brand =='adidas'%}#6A82FB;{%endif%}
+                    {% if i.brand =='newbalance'%}#bdc3c7;{%endif%}
+                    {% if i.brand =='jordan'%}#DECBA4;{%endif%}">
+
+                    <div class="change">
+                        <a href="{{ url_for('platform._list',code=i.code) }}" style="text-decoration: none; " class="text model-link">{{i.name | upper}}</a>
+                    </div>
+                    <div class="change" style="display:none; padding-top:30%; " >
+                        <table class="mx-auto">
+                            <tr class="table-active text-white"><td class="font-weight-bold">모델명:</td> <td>{{i.subname}}</td></tr>
+                            <tr class="table-active text-white"><td class="font-weight-bold">출시일:</td> <td>{{i.release_date | datetime}}</td></tr>
+                            <tr class="table-active text-white"><td class="font-weight-bold">발매가:</td> <td>{{i.retail_price|price}}</td></tr>
+                        </table>
+                        {% if g.user.username == '1234' %}
+                        <div class="text-center" style="padding-top:5%;">
+                            <a href="{{ url_for('model.modify', shoes_id=i.id) }}" class=" btn btn-light text-warning">수정</a>
+                            <a href="{{ url_for('model.delete', shoes_id=i.id) }}" class="delete btn btn-light text-danger">삭제</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block script%}
+<script type='text/javascript'>
+var check = $("input[type='checkbox']");
+check.click(function(){
+	$(".change").toggle();
+});
+
+
+filterSelection("all")
+function filterSelection(c) {
+  var x, i;
+  x = document.getElementsByClassName("column");
+  if (c == "all") c = "";
+  for (i = 0; i < x.length; i++) {
+    w3RemoveClass(x[i], "show");
+    if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+  }
+}
+
+function w3AddClass(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    if (arr1.indexOf(arr2[i]) == -1) {element.className += " " + arr2[i];}
+  }
+}
+
+function w3RemoveClass(element, name) {
+  var i, arr1, arr2;
+  arr1 = element.className.split(" ");
+  arr2 = name.split(" ");
+  for (i = 0; i < arr2.length; i++) {
+    while (arr1.indexOf(arr2[i]) > -1) {
+      arr1.splice(arr1.indexOf(arr2[i]), 1);
+    }
+  }
+  element.className = arr1.join(" ");
+}
+
+var btnContainer = document.getElementById("myBtnContainer");
+var btns = btnContainer.getElementsByClassName("btn btn-outline-secondary");
+for (var i = 0; i < btns.length; i++) {
+  btns[i].addEventListener("click", function(){
+    var current = document.getElementsByClassName("active");
+    current[0].className = current[0].className.replace(" active", "");
+    this.className += " active";
+
+  });
+}
+
+$(document).ready(function(){
+    $(".delete").on('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = $(this).data('uri');
+        }
+    });
+});
+</script>
+{% endblock%}

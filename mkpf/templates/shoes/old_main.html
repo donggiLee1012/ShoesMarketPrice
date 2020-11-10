@@ -1,0 +1,230 @@
+{% extends 'new_base.html' %}
+
+{% block style %}
+.flip-card {
+
+width: 200px;
+height: 200px;
+perspective: 1000px;
+}
+
+.flip-card-inner {
+position: relative;
+width: 100%;
+height: 100%;
+text-align: center;
+transition: transform 0.6s;
+transform-style: preserve-3d;
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.flip-card:hover .flip-card-inner {
+transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+position: absolute;
+width: 100%;
+height: 100%;
+-webkit-backface-visibility: hidden;
+backface-visibility: hidden;
+}
+
+.flip-card-front {
+
+color: black;
+}
+
+.flip-card-back {
+
+color: white;
+transform: rotateY(180deg);
+justify-content: center;
+align-items: center;
+display: flex;
+}
+.grid-container{
+display: grid;
+grid-column-gap: 10px;
+grid-template-columns: auto auto auto auto auto;
+padding: 20px;
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+text-align: center;
+
+}
+.brand-link:hover{
+
+color:white;
+}
+h2 {
+color: white;
+text-shadow: 2px 2px 4px #000000;
+}
+
+h3 {
+color: white;
+text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+}
+.content-box {
+padding :20px;
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+.content-box-item {
+padding :10px;
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+margin-bottom:10px;
+}
+.card {
+box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+padding: 16px;
+text-align: center;
+background-color: #f1f1f1;
+}
+.column {
+float: left;
+width: 20%;
+padding: 0 10px;
+}
+
+/* Remove extra left and right margins, due to padding */
+.row {margin: 0 -5px;}
+
+/* Clear floats after the columns */
+.row:after {
+content: "";
+display: table;
+clear: both;
+}
+
+/* Responsive columns */
+@media screen and (max-width: 600px) {
+.column {
+width: 100%;
+display: block;
+margin-bottom: 20px;
+}
+}
+
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+
+<div class="w3-main w3-content w3-padding" style="max-width:1500px;margin-top:100px">
+    <div class="grid-container w3-center" id="brand">
+        {%for i in model | groupby('brand')%}
+        <div class="grid-item">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="{{url_for('static',filename='brand/{}.png'.format(i[0]))}}" alt="i[0]" style="width:100%">
+                    </div>
+                    <div class=" flip-card-back" style="background-color:
+                    {% if i[0] =='nike'%}#cb2d3e;{%endif%}
+                    {% if i[0] =='converse'%}#fc4a1a;{%endif%}
+                    {% if i[0] =='adidas'%}#6A82FB;{%endif%}
+                    {% if i[0] =='newbalance'%}#bdc3c7;{%endif%}
+                    {% if i[0] =='jordan'%}#DECBA4;{%endif%}">
+                        <a class="brand-link" href="{{url_for('model.view')}}" style="text-decoration:none; color:white;"><h2>{{i[0]}} : {{i[1] |length}}</h2></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <p>
+
+    <div class='content-box'>
+        <div class="content-box-item" >
+            <h2 style="display:inline">시장데이터 : </h2>
+            <a  style="text-decoration:none;" href="{{url_for('market._list')}}"><h3 style="display:inline">{{marketprice| length}}건</h3></a>
+            <br>
+            <h2 style="display:inline">플랫폼데이터 : </h2>
+            <a  style="text-decoration:none;" href="{{url_for('market._list')}}"><h3 style="display:inline">{{modelprice| length}}건</h3></a>
+        </div>
+        <div class="content-box-item">
+            <h2>거래량이 많은 모델 TOP 5</h2>
+
+            <div class="input-group" style="width:25%">
+                <div class="input-group-prepend">
+                    <label class="input-group-text text-danger" for="size-select">SIZE</label>
+                </div>
+                <select class="custom-select" name="size-select" id="size-select">
+                    <optgroup label="Size Choose..."></optgroup>
+                    {% for item in form.size %}
+                    <option value={{item.data}} {% if sc == item.data|int %} selected {% endif%}>{{item.label}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="row">
+                {% for i in topfive %}
+
+                <div class="card" style="float: left; width: 20%;">
+
+                        <img class="card-img-top" src="{{ url_for('static',filename='shoesmodels/'+i.img )}}" style='max-height:166.47px; width:100%;' />
+
+                    <a href="{{url_for('model.view',_anchor=i.code)}}">
+                    <div class="card-img-overlay">
+
+                    </div>
+                        </a>
+                    <a href="{{url_for('platform._list',code=i.code)}}" style="text-decoration:none;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item list-group-item-success"><span class="font-weight-bold text-dark">사이즈 : </span><span class="badge badge-pill badge-light" style="font-size: medium">{% if sc !='default'%}{{sc}}{% else %}기본{% endif%}</span></li>
+                            <li class="list-group-item list-group-item-info"><span class="font-weight-bold text-dark">거래량 : </span><span class="badge badge-pill badge-light" style="font-size: medium">
+                            {% if sc !='default'%}
+                            {{detail[loop.index0][sc]['count']}}건
+                            {% else %}
+                            {{i.platform_price_set | length}}건
+                            {% endif%}
+                            </span></li>
+                            <li class="list-group-item list-group-item-primary"><span class="font-weight-bold text-dark">평균시세 : </span><span class="badge badge-pill badge-light" style="font-size: medium">
+                        {% if sc !='default'%}
+                            {{detail[loop.index0][sc]['avg'] |price}}
+                            {% else %}
+                            {{ (i.platform_price_set  | sum(attribute='price') // (i.platform_price_set | length)) | price}}
+                            {% endif%}
+                        </span></li>
+                            <li class="list-group-item list-group-item-warning"><span class="font-weight-bold text-dark">평균차익 : </span><span class="badge badge-pill badge-light " style="font-size: medium">
+                            {% if sc !='default'%}
+                            {{ (detail[loop.index0][sc]['avg'] - i.retail_price) |price}}
+                            {% else %}
+                            {{ (i.platform_price_set  | sum(attribute='price') // (i.platform_price_set | length) -i.retail_price ) | price}}
+                            {% endif%}
+                        </span></li>
+                        </ul>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class='content-box'>
+        <div class="content-box-item" >
+            <h2>가장비싼모델 TOP 5</h2>
+        </div>
+    </div>
+
+
+</div>
+<form id="sizeform" method="get" action="{{ url_for('shoes.main',_anchor='size-select') }}">
+    <input type="hidden" id="sc" name="sc" value="{{ sc }}">
+</form>
+{% endblock %}
+
+{% block script%}
+
+<script type="text/javascript">
+ $("#size-select").on('change', function() {
+        $("#sc").val($(this).val());
+        $("#sizeform").submit();
+    });
+
+</script>
+{% endblock %}

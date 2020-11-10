@@ -16,7 +16,6 @@ bp = Blueprint('model',__name__,url_prefix='/model')
 @bp.route('/create/', methods=['GET', 'POST'])
 def create():
     form = ShoesModelCreateForm()
-    loading = url_for('static',filename='ajax-loader.gif')
 
     if request.method == 'POST' and form.validate_on_submit():
 
@@ -71,7 +70,8 @@ def create():
             else:
                 flash('이미 존재하는 모델이름입니다.')
 
-    return render_template('model/model_create.html',form=form,loading=loading)
+    return render_template('model/model_create.html',form=form)
+
 
 
 
@@ -83,6 +83,8 @@ def view():
 
     items = Shoes.query.order_by(Shoes.release_date.desc())
     return render_template('model/model_list.html',forms=forms,items=items)
+
+
 
 @bp.route('/modify/<int:shoes_id>', methods=('GET', 'POST'))
 @login_required
@@ -126,7 +128,7 @@ def modify(shoes_id):
             return redirect(url_for('model.view'))
     else:
         form = ShoesModelCreateForm(obj=model)
-    return render_template('model/model_create.html', form=form)
+    return render_template('model/old_model_create.html', form=form)
 
 @bp.route('/delete/<int:shoes_id>')
 @login_required
@@ -190,11 +192,75 @@ def process(code):
 
     return ('찾은값:{} DB에 저장한값:{}'.format(tablenum,num))
 
+#----------------------------------------------------
+# ------------------- old version -------------------
+#----------------------------------------------------
 
-@bp.route('/test/')
-def test22():
-    q=Shoes.query.get(1)
-    db.session.delete(q)
-    db.session.commit()
+@bp.route('/oldview/')
+def old_view():
+    form = ShoesModelCreateForm()
+    forms = form.brand.choices
 
-    return render_template('test/test.html')
+    items = Shoes.query.order_by(Shoes.release_date.desc())
+    return render_template('model/old_model_list.html',forms=forms,items=items)
+
+
+@bp.route('/oldcreate/', methods=['GET', 'POST'])
+def old_create():
+    form = ShoesModelCreateForm()
+
+
+    if request.method == 'POST' and form.validate_on_submit():
+
+        model_path = os.path.join(os.getcwd(), r'mkpf/static/shoesmodels')
+        if os.path.exists(model_path):
+            pass
+        else:
+            os.makedirs(model_path)
+
+        name = form.name.data
+        price = form.price.data
+        brand = form.brand.data
+        code = form.code.data
+        color = form.colorway.data
+        keyword = form.keyword.data
+        releasedate = form.releasedate.data
+        uri=form.uri.data
+        img = form.img.data
+
+        exists_code = Shoes.query.filter_by(code=code).first()
+        exists_name = Shoes.query.filter_by(name=name).first()
+        # 기존의 만들어둔 모델이있는지 확인
+        if not exists_code and not exists_name :
+            # 파일저장
+            # 경로일때
+            if img == None:
+                filename = secure_filename(name)+'.jpg'
+                img_path = os.path.join(model_path, filename)
+                #urlretrieve(다운이미지경로,저장위치및이름)
+                urllib.request.urlretrieve(uri, img_path)
+
+            # 로컬일떄
+            else:
+                filename = secure_filename(img.filename)
+                if name in filename :
+                    pass
+                else:
+                    filename = secure_filename(name)+'.jpg'
+                img.save(os.path.join(model_path, filename))
+
+            model = Shoes(code=code, img=filename, brand=brand,release_date=releasedate,name=name,colorway=color,retail_price=price,keyword=keyword)
+            db.session.add(model)
+            db.session.commit()
+            howmany = process(code)
+
+            flash(howmany)
+
+            return redirect(url_for('model.view'))
+        else:
+            if exists_code :
+                flash('이미 존재하는 모델넘버입니다.')
+            else:
+                flash('이미 존재하는 모델이름입니다.')
+
+    return render_template('model/old_model_create.html',form=form)

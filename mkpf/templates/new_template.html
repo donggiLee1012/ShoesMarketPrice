@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Aler Template">
+    <meta name="keywords" content="Aler, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Shoes Market Price</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,800,900&display=swap"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900&display=swap" rel="stylesheet">
+
+    <!-- Css Styles -->
+
+    <link rel="stylesheet" href="{{ url_for('static',filename='source/css/bootstrap.min.css')}}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='source/css/font-awesome.min.css')}}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='source/css/elegant-icons.css')}}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='source/css/jquery-ui.min.css')}}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='source/css/nice-select.css')}}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='source/css/owl.carousel.min.css')}}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='source/css/magnific-popup.css')}}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='source/css/slicknav.min.css')}}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='source/css/style.css')}}" type="text/css">
+</head>
+<style>
+    {% block style %}
+    {% endblock %}
+</style>
+
+<body>
+<!-- Page Preloder -->
+    <div id="preloder">
+        <div id='loaders' class="loader"></div>
+    </div>
+
+    <!-- Offcanvas Menu Wrapper Begin -->
+    <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="canvas-close">
+            <span class="icon_close"></span>
+        </div>
+        <div class="logo">
+            <a href="{{url_for('shoes.main')}}">
+                <img src="{{url_for('static',filename='source/img/main3.png')}}" alt="">
+            </a>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <div class="om-widget">
+            <ul>
+                <li><i class="icon_mail_alt"></i> multidong1017@gmail.com</li>
+            </ul>
+        </div>
+        <div class="om-social">
+            <a href="#"><i class="fa fa-youtube-play"></i></a>
+            <a href="https://www.instagram.com/donggi1012/" target="_blank"><i class="fa fa-instagram"></i></a>
+            <a href="https://github.com/donggiLee1012/shoes-server" target="_blank"><i class="fa fa-github"></i></a>
+        </div>
+    </div>
+    <!-- Offcanvas Menu Wrapper End -->
+
+    <!-- Header Section Begin -->
+    <header class="header-section">
+       <div class="hs-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col-lg-2">
+                        <div class="logo">
+                            <a href="{{url_for('shoes.main')}}"><img src="{{url_for('static',filename='source/img/main2.png')}}" alt=""></a>
+                        </div>
+                    </div>
+                    <div class="col"></div>
+                </div>
+
+                <div class="canvas-open">
+                    <span class="icon_menu"></span>
+                </div>
+            </div>
+        </div>
+        <div class="hs-nav ">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <nav class="nav-menu">
+                            <ul>
+                                <li><a href="{{url_for('shoes.main')}}">Home</a></li>
+                                <li><a href="#">Model</a>
+                                    <ul class="dropdown">
+                                        <li><a href="{{url_for('model.create')}}">모델 생성</a></li>
+                                        <li><a href="{{url_for('model.view')}}">모델 리스트</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#">Market</a>
+                                    <ul class="dropdown">
+                                        <li><a href="{{url_for('market._list')}}">마켓 리스트</a></li>
+                                        <li><a href="{{url_for('market.search')}}">마켓 시세 조회</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#">About</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="hn-social">
+                            {% if g.user %}
+                            <a href="{{ url_for('auth.logout') }}"><i class="fa fa-user-times"></i>{{ g.user.username }} (로그아웃)</a>
+                            {% else %}
+                            <a href="{{ url_for('auth.login') }}"><i class="fa fa-user"></i> 로그인</a>
+                            <a href="{{ url_for('auth.signup') }}"><i class="fa fa-sign-in"></i> 회원가입</a>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header End -->
+
+{% block content %}
+{% endblock %}
+
+<footer class="footer-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="fs-about">
+                        <div class="fs-logo">
+                            <a href="#">
+                                <img src="{{url_for('static',filename='source/img/main3.png')}}" alt="">
+                            </a>
+                        </div>
+                        <div class="section-title sidebar-title-a">
+                                <h6>crawling web site</h6>
+                            </div>
+                        <div class="fs-social">
+                            <a href="#"><i class="fa fa-youtube-play"></i></a>
+                            <a href="https://www.instagram.com/donggi1012/" target="_blank"><i class="fa fa-instagram"></i></a>
+                            <a href="https://github.com/donggiLee1012/shoes-server" target="_blank"><i class="fa fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                    <div class="fs-widget">
+                        <h5>Environment</h5>
+                        <ul>
+                            <li><a href="#">Python</a></li>
+                            <li><a href="#">Flask</a></li>
+                            <li><a href="#">Google Cloud Platform</a></li>
+                            <li><a href="#"></a></li>
+                            <li><a href="#">Ubuntu 18.04 LTS</a></li>
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-sm-6">
+                    <div class="fs-widget">
+                        <h5>Links</h5>
+                        <ul>
+                            <li><a href="{{url_for('model.create')}}">모델 생성</a></li>
+                            <li><a href="{{url_for('model.view')}}">모델 리스트</a></li>
+                            <li><a href="{{url_for('market._list')}}">마켓 리스트</a></li>
+                            <li><a href="{{url_for('market.search')}}">마켓 시세 조회</a></li>
+                            <li><a href="#">About</a></li>
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="copyright-text">
+                <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+
+    <script src="{{ url_for('static',filename='source/js/jquery-3.3.1.min.js')}}"></script>
+    <script src="{{ url_for('static',filename='source/js/bootstrap.min.js')}}"></script>
+    <script src="{{ url_for('static',filename='source/js/jquery.magnific-popup.min.js')}}"></script>
+    <script src="{{ url_for('static',filename='source/js/mixitup.min.js')}}"></script>
+    <script src="{{ url_for('static',filename='source/js/jquery-ui.min.js')}}"></script>
+    <script src="{{ url_for('static',filename='source/js/jquery.nice-select.min.js')}}"></script>
+    <script src="{{ url_for('static',filename='source/js/jquery.slicknav.js')}}"></script>
+    <script src="{{ url_for('static',filename='source/js/owl.carousel.min.js')}}"></script>
+    <script src="{{ url_for('static',filename='source/js/jquery.richtext.min.js')}}"></script>
+    <script src="{{ url_for('static',filename='source/js/image-uploader.min.js')}}"></script>
+    <script src="{{ url_for('static',filename='source/js/main.js')}}"></script>
+{% block script%}
+{% endblock %}
+</body>
+</html>

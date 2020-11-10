@@ -211,7 +211,9 @@ class Xxblue(Driver):
 
         # 첫번째 상품
         try:
-            self.driver.find_elements_by_css_selector("div[class^='rarex-grid-product product']")[0].click()
+            # web 변경되면서 속성바뀜
+            #self.driver.find_elements_by_css_selector("div[class^='rarex-grid-product product']")[0].click()
+            self.driver.find_elements_by_css_selector('.item')[0].click()
         except:
             print('검색결과없음')
 

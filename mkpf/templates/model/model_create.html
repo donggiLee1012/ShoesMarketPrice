@@ -1,129 +1,82 @@
-{% extends 'base.html' %}
+{% extends 'new_template.html' %}
+
 {% block style %}
-div#loading {
-       width: 35px;
-       height: 35px;
-       display: none;
-       text-align : center;
-       background: url(/static/ajax-loader.gif) no-repeat;
-       cursor: wait;
-       }
 {% endblock %}
+
 
 {% block content %}
 
-<div class="container my-3 center" >
-    <div class="py-5 text-center">
-        <h3>신발모델 생성페이지</h3>
-        <p>
-        </p>
-    </div>
-    <div id="loading"></div>
+<!-- Contact Form Section Begin -->
+    <section class="contact-form-section spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="cf-content">
+                        <div class="cc-title">
+                            <h4>신발모델 생성폼</h4>
+                        </div>
+                        <form method="post" class="cc-form" enctype="multipart/form-data">
+                            {{ form.csrf_token }}
+                            {% include "form_errors.html" %}
+                            <div class="group-input">
+                                <select name="brand" id="brand">
+                                    {% for item in form.brand %}
+                                    <option value={{item.data}}>{{item.label}}</option>
+                                    {% endfor %}
+                                </select>
+                                <input  type="text" name="code" placeholder="Shoes code" id="code" value="{{ form.code.data or ''}}" style="width:20%; margin-left:1%;">
+                                <input type="text" name="name" placeholder="Shoes name" id="name" value="{{ form.name.data or ''}}">
+                                <input type="text" name="price" placeholder="Retail Price (&#8361;)" id="price" value="{{ form.price.data or ''}}">
+                                <input type="date" name="releasedate" id="releasedate" value="{{ form.releasedate.data or '2020-10-12'}}">
+                                <input type="text" name="keyword" placeholder="keyword" id="keyword" value="{{ form.keyword.data or ''}}">
+                                <input type="text" name="colorway" id="colorway" placeholder="colorway" value="{{ form.colorway.data or ''}}">
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-12" id="rad">
+                                    <input type="radio" value="img_path" id="img_path" name="rdimg" checked="checked">
+                                    <label for="img_path" class="text-muted">경로로 업로드</label>
+                                    <input type="radio" value="img_local" id="img_local" name="rdimg">
+                                    <label for="img_local" class="text-muted">로컬로 업로드</label>
+                                </div>
+                            </div>
 
-    <div class="jumbotron text-center" id="content">
-        <form method="post" class="post-form my-2" enctype="multipart/form-data" >
-            {{ form.csrf_token }}
+                            <div class="form-group row" id="select_path">
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="text" name="uri" id="uri" value="{{ form.uri.data or ''}}" onchange="loadFile(event)">
+                                </div>
+                            </div>
+                            <span class="form-group row" id="select_local" style="display:none;" >
+                                <div class="custom-file col-sm-5" id="select_hidden" style="margin-left:4%;">
+                                    <input class="custom-file-input" type="file" accept="image/*" name="img" id="img" onchange="loadFile(event)">
+                                    <label class="custom-file-label" for="img">선택하기</label>
+                                </div>
+                            </span>
+                            <div class="form-group">
+                                <img id="output" style="max-height:50%; max-width:50%;"/>
+                            </div>
 
-        {% include "form_errors.html" %}
-            <!--    브랜드     -->
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label" for="brand">브랜드를 선택하세요 : </label>
-                <div class="col-sm-7">
-                <select class="custom-select my-1 mr-sm-2" name="brand" id="brand">
-                    {% for item in form.brand %}
-                    <option value={{item.data}}>{{item.label}}</option>
-                    {% endfor %}
-                </select>
-                </div>
-            </div>
-            <!--    제품명     -->
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label" for="name">제품명을 입력하세요 : </label>
-                <div class="col-sm-7">
-                <input class="form-control" type="text" name="name" placeholder="Jordan 5 Retro OFF-WHITE Sail or 327 Grey ...." id="name" value="{{ form.name.data or ''}}">
-                </div>
-            </div>
-            <!--    제품코드    -->
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label" for="code">제품코드를 입력하세요 : </label>
-                <div class="col-sm-7">
-                <input class="form-control" type="text" name="code" id="code" value="{{ form.code.data or ''}}">
-                </div>
-            </div>
-            <!--    발매가     -->
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label" for="price">발매가를 입력하세요 : </label>
-                <div class="col-sm-7">
-                <input class="form-control" type=number name="price" id="price" value="{{ form.price.data or ''}}">
-                </div>
-            </div>
-            <!--    색상     -->
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label" for="colorway">컬러를 입력하세요 : </label>
-                <div class="col-sm-7">
-                <input class="form-control" type="text" name="colorway" id="colorway" value="{{ form.colorway.data or ''}}">
-                </div>
-            </div>
-            <!--    발매일     -->
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label" for="releasedate">발매일을 선택하세요 : </label>
-                <div class="col-sm-7">
-                <input class="form-control" type="date" name="releasedate" id="releasedate" value="{{ form.releasedate.data or '2020-10-12'}}">
-                </div>
-            </div>
-            <!--    키워드     -->
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label" for="keyword">키워드를 입력하세요 : </label>
-                <div class="col-sm-7">
-                <input class="form-control" type="text" name="keyword" placeholder="현재는 키워드 1개만... 3자이상" id="keyword" value="{{ form.keyword.data or ''}}">
-                </div>
-            </div>
-            <!--    이미지선택     -->
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label" for="rad">이미지 입력방식을 선택하세요 :</label>
-                <div class="col-sm-7" id="rad">
-                    <input type="radio" value="img_path" id="img_path" name="rdimg" checked="checked">
-                    <label for="img_path">경로로 업로드</label>
-                    <input type="radio" value="img_local" id="img_local" name="rdimg">
-                    <label for="img_local">로컬로 업로드</label>
-                </div>
-            </div>
-            <!--    이미지     -->
-            <div class="form-group row" id="select_path">
-                <label class="col-sm-4 col-form-label" for="uri">이미지 주소를 입력하세요 : </label>
-                <div class="col-sm-7">
-                <input class="form-control" type="text" name="uri" id="uri" value="{{ form.uri.data or ''}}" onchange="loadFile(event)">
-                </div>
-            </div>
+                            <button onclick="loading();" type="submit" class="site-btn">Submit</button>
 
-            <div class="form-group row" id="select_local" style="display:none;">
-                <label class="col-sm-4 col-form-label" for="img">로컬 이미지를 선택하세요 : </label>
-                <div class="custom-file col-sm-7" id="select_hidden">
-                    <input class="custom-file-input " type="file" accept="image/*" name="img" id="img" onchange="loadFile(event)">
-                    <label class="custom-file-label" for="img">선택하기</label>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <img id="output" style="max-height:200px; max-width:200px;"/>
-            </div>
-
-            <div class="text-center">
-            <button onclick="loading();" type="submit"{% if not g.user %}disabled {% endif %} class="col-md-2 btn btn-secondary">{% if not g.user %}로그인후사용{% else %}저장하기{% endif %}</button>
-            <button type="reset" class="col-md-2 btn btn-secondary">초기화</button>
-                </div>
-        </form>
-    </div>
-</div>
-
+        </div>
+    </section>
+    <!-- Contact Form Section End -->
 {% endblock %}
 
-
 {% block script%}
-
-
-
-
 <script type="text/javascript">
+// <![CDATA[
+           function loading(){
+               alert("데이터를 검색합니다.");
+               $("#preloder").show();
+               $("#loaders").show();
+           }
+// ]]>
+
+
 $(document).ready(function(){
   $("#img_path").click(function(){
 
@@ -139,14 +92,6 @@ $(document).ready(function(){
     $("#img_local").show();
   });
 });
-
-// <![CDATA[
-           function loading(){
-               alert("데이터를 찾으시겠습니까?");
-               $("#loading").show();
-               $("#content").hide();
-           }
-// ]]>
 
 var loadFile = function(event) {
     var output = document.getElementById('output');
