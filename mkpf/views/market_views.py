@@ -32,9 +32,6 @@ def _list():
     kw = request.args.get('kw', type=str, default='')
     so = request.args.get('so',type=str, default='recent')
 
-
-
-
     #정렬
     if so == 'expensive':
         shoes_list = Marketprice.query.order_by(Marketprice.price.desc())

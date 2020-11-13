@@ -67,7 +67,7 @@ opacity: 1;
                                 <div class="text-center" style="padding-top:25%;">
                                 <a href="{{ url_for('platform._list',code=item.code) }}" class="btn btn-light font-weight-normal">view</a>
                                 </div>
-                                {% if g.user.username == '1234' %}
+                                {% if g.user.roles == 'admin' or 'manager' %}
 
                                 <div class="text-center" style="padding-top:5%;">
                                     <a href="{{ url_for('model.modify', shoes_id=item.id) }}" class=" btn btn-light text-warning">수정</a>

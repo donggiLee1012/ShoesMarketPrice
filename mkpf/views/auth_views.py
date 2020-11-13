@@ -3,11 +3,20 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
 
 from mkpf import db
-from mkpf.forms import UserCreateForm,UserLoginForm
+from mkpf.forms import UserCreateForm,UserLoginForm,UserManagement
 from mkpf.models import User
 import functools
 
 bp = Blueprint('auth',__name__,url_prefix='/auth')
+
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+        return view(**kwargs)
+    return wrapped_view
+
 
 @bp.route('/signup',methods=('GET','POST'))
 def signup():
@@ -18,7 +27,8 @@ def signup():
         if not user and not email:
             user = User(username=form.username.data,
                         password = generate_password_hash(form.password1.data),
-                        email=form.email.data)
+                        email=form.email.data,
+                        roles=form.roles.data)
             db.session.add(user)
             db.session.commit()
 
@@ -45,7 +55,44 @@ def login():
             session['user_id'] = user.id
             return redirect(url_for('shoes.main'))
         flash(error)
+
     return render_template('auth/login.html',form=form)
+
+@bp.route('/management/',methods=('GET','POST'))
+@login_required
+def management():
+
+    form = UserManagement()
+
+    if g.user.roles == "admin" :
+        users = User.query.all()
+    else :
+        users = User.query.filter(User.roles != 'admin').all()
+
+    if request.method == 'POST' and form.validate_on_submit():
+
+        user = User.query.filter_by(username=form.username.data).first()
+
+        form.populate_obj(user)
+
+        db.session.commit()
+
+        return redirect(url_for('auth.management'))
+
+    return render_template('auth/management.html',users=users,form=form)
+
+
+@bp.route('/delete/<int:user_id>')
+@login_required
+def delete(user_id):
+    user = User.query.get_or_404(user_id)
+
+    if g.user.roles != 'admin':
+        flash('삭제권한이 없습니다')
+        return redirect(url_for('auth.management'))
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for('auth.management'))
 
 
 
@@ -64,11 +111,3 @@ def load_logged_in_user():
 def logout():
     session.clear()
     return redirect(url_for('shoes.main'))
-
-def login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if g.user is None:
-            return redirect(url_for('auth.login'))
-        return view(**kwargs)
-    return wrapped_view

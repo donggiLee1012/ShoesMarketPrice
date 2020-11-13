@@ -27,7 +27,14 @@ def integer(value):
     if value =='':
         value=0
     return int(value)
-
+def roles(value:str):
+    if value =='admin':
+        value = '관리자'
+    elif value =='manager':
+        value = '매니저'
+    else :
+        value = '민간인'
+    return value
 def exchange_rate(value):
     result =''
     try :

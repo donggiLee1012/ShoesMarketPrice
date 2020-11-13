@@ -15,7 +15,7 @@
                         <div class="cc-title">
                             <h4>신발모델 생성폼</h4>
                         </div>
-                        <form method="post" class="cc-form" enctype="multipart/form-data">
+                        <form method="post" class="cc-form" id='createform' enctype="multipart/form-data">
                             {{ form.csrf_token }}
                             {% include "form_errors.html" %}
                             <div class="group-input">
@@ -55,7 +55,7 @@
                                 <img id="output" style="max-height:50%; max-width:50%;"/>
                             </div>
 
-                            <button onclick="loading();" type="submit" class="site-btn">Submit</button>
+                            <button onclick="$(this).SearchBtn();" type="submit" class="site-btn">Submit</button>
 
                         </form>
                     </div>
@@ -75,6 +75,16 @@
                $("#loaders").show();
            }
 // ]]>
+
+$.fn.SearchBtn = function() {
+        if (confirm('입력 하신내용으로 모델생성및 크롤링을 시작하시겠습니까?')){
+        $('#createform').submit();
+                $("#preloder").show();
+               $("#loaders").show();
+        } else {
+            alert("취소하셨습니다.");
+        }
+};
 
 
 $(document).ready(function(){

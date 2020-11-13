@@ -221,7 +221,7 @@ border-radius: 50%;
                             <tr class="table-active text-white"><td class="font-weight-bold">출시일:</td> <td>{{i.release_date | datetime}}</td></tr>
                             <tr class="table-active text-white"><td class="font-weight-bold">발매가:</td> <td>{{i.retail_price|price}}</td></tr>
                         </table>
-                        {% if g.user.username == '1234' %}
+                       {% if g.user.roles == 'admin' or 'manager' %}
                         <div class="text-center" style="padding-top:5%;">
                             <a href="{{ url_for('model.modify', shoes_id=i.id) }}" class=" btn btn-light text-warning">수정</a>
                             <a href="{{ url_for('model.delete', shoes_id=i.id) }}" class="delete btn btn-light text-danger">삭제</a>

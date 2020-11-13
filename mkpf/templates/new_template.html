@@ -31,7 +31,7 @@
 </style>
 
 <body>
-<!-- Page Preloder -->
+<!-- 로딩바 -->
     <div id="preloder">
         <div id='loaders' class="loader"></div>
     </div>
@@ -48,7 +48,29 @@
             </a>
         </div>
         <div id="mobile-menu-wrap"></div>
-        <div class="om-widget">
+
+        <div class="om-widget" >
+            {% if g.user %}
+            <button style="margin-bottom:5px;" class="btn btn-outline-success " onclick="window.location.href='{{ url_for('auth.logout') }}';">
+                <i class="fa fa-user-times">&nbsp;<span class="font-weight-bolder ">{{ g.user.username }}</span>(로그아웃)</i>
+            </button>
+            <button style="margin-bottom:5px;" class="btn btn-outline-dark" onclick="window.location.href='{{ url_for('auth.logout') }}';">
+                <i class="fa fa-cog">설정</i>
+            </button>
+            {% else %}
+            <button style="margin-bottom:5px;" class="btn btn-outline-success" onclick="window.location.href='{{ url_for('auth.login') }}';">
+                <i class="fa fa-user"></i> 로그인
+            </button>
+            <button style="margin-bottom:5px;" class="btn btn-outline-success" onclick="window.location.href='{{ url_for('auth.signup') }}';">
+                <i class="fa fa-sign-in"></i> 회원가입
+            </button>
+            {% endif %}
+
+            {% if g.user.roles == 'admin' or g.user.roles == 'manager' %}
+            <button style="margin-bottom:5px;" class="btn btn-outline-dark" onclick="window.location.href='{{ url_for('auth.management') }}';">
+                <i class="fa fa-cogs">회원관리</i>
+            </button>
+            {% endif %}
             <ul>
                 <li><i class="icon_mail_alt"></i> multidong1017@gmail.com</li>
             </ul>
@@ -83,7 +105,7 @@
         <div class="hs-nav ">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-9">
+                    <div class="col-lg-8">
                         <nav class="nav-menu">
                             <ul>
                                 <li><a href="{{url_for('shoes.main')}}">Home</a></li>
@@ -103,13 +125,17 @@
                             </ul>
                         </nav>
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-4">
                         <div class="hn-social">
                             {% if g.user %}
-                            <a href="{{ url_for('auth.logout') }}"><i class="fa fa-user-times"></i>{{ g.user.username }} (로그아웃)</a>
+                            <a href="{{ url_for('auth.logout') }}"><i class="fa fa-user-times"></i>&nbsp;<span class="font-weight-bolder ">{{ g.user.username }}</span>(로그아웃)</a>
+                            <a href="#"><i class="fa fa-cog"></i>설정</a>
                             {% else %}
                             <a href="{{ url_for('auth.login') }}"><i class="fa fa-user"></i> 로그인</a>
                             <a href="{{ url_for('auth.signup') }}"><i class="fa fa-sign-in"></i> 회원가입</a>
+                            {% endif %}
+                            {% if g.user.roles == 'admin' or g.user.roles == 'manager' %}
+                            <a href="{{ url_for('auth.management') }}"><i class="fa fa-cogs"></i>회원관리</a>
                             {% endif %}
 
                         </div>

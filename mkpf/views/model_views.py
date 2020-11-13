@@ -91,7 +91,7 @@ def view():
 def modify(shoes_id):
     model = Shoes.query.get_or_404(shoes_id)
 
-    if g.user.username != '1234':
+    if g.user.roles != 'admin' and 'manager':
         flash('수정권한이 없습니다')
         return redirect(url_for('model.view'))
     if request.method == 'POST':
@@ -135,7 +135,7 @@ def modify(shoes_id):
 def delete(shoes_id):
     question = Shoes.query.get_or_404(shoes_id)
 
-    if g.user.username != '1234':
+    if g.user.roles != 'admin' and 'manager':
         flash('삭제권한이 없습니다')
         return redirect(url_for('model.view'))
     db.session.delete(question)

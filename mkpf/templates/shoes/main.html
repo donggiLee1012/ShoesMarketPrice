@@ -180,7 +180,7 @@
                             <a href="{{url_for('market._list')}}"><span>{{marketprice| length}}건</span></a>
                             <br>
                             <span>
-                                {% if g.user.username == '1234' %}
+                                {% if g.user.roles == 'admin' or 'manager' %}
                                 <a target="_blank" href="http://nike-mania.co.kr/">나이키매니아</a>
                                 <a target="_blank" href="https://footsell.com/">풋셀</a>
                                 <a target="_blank" href="https://m.bunjang.co.kr/">번개장터</a>
@@ -200,7 +200,7 @@
                             <a href="{{url_for('market._list')}}"><span>{{modelprice| length}}건</span></a>
                            <br>
                             <span>
-                                {% if g.user.username == '1234' %}
+                                {% if g.user.roles == 'admin' or 'manager' %}
                                 <a target="_blank" href="https://www.xxblue.com/">xxblue</a>
                                  {% else %}
                                 <p><strong>1</strong> web-site crawling</p>

@@ -4,12 +4,20 @@ from wtforms.fields.html5 import EmailField,DateField
 from flask_wtf.file import FileField, FileRequired
 from wtforms.validators import DataRequired,Length,EqualTo,Email
 
+roles_list=[('admin','관리자'),('manager','매니저'),('common','민간인')]
+
+class UserManagement(FlaskForm):
+    username = StringField('사용자이름', validators=[DataRequired(), Length(min=3, max=25)])
+    email = EmailField('이메일', [DataRequired('이메일은 필수입력 항목입니다.'), Email()])
+    roles = SelectField('권한',choices=roles_list,coerce=str)
 
 class UserCreateForm(FlaskForm):
     username = StringField('사용자이름', validators=[DataRequired(), Length(min=3, max=25)])
     password1 = PasswordField('비밀번호', validators=[DataRequired(), EqualTo('password2', '비밀번호가 일치하지 않습니다')])
     password2 = PasswordField('비밀번호확인', validators=[DataRequired()])
+    roles = SelectField('권한', choices=roles_list, coerce=str)
     email = EmailField('이메일', [DataRequired('이메일은 필수입력 항목입니다.'), Email()])
+
 
 class UserLoginForm(FlaskForm):
     username = StringField('사용자이름',validators=[DataRequired(), Length(min=3,max=25)])

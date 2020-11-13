@@ -1,0 +1,108 @@
+{% extends 'new_template.html' %}
+
+{% block style %}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+{% endblock %}
+
+
+{% block content %}
+<!-- Property Details Section Begin -->
+<section class="property-details-section">
+
+    <div class="container" style="margin-top:60px;">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="pd-text">
+                    <div class="pd-widget">
+                            <h4>{% if g.user.roles == "admin" or g.user.roles == "manager" %}관리자{%endif%}회원정보수정</h4>
+
+                        </div>
+                    <div style="overflow-x:auto;">
+                        {% include "form_errors.html" %}
+                    <table class="table table-hover">
+                        <thead>
+                        <tr align="center">
+                            <th scope="col">Id</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Password</th>
+                            <th scope="col">Roles</th>
+                             <th scope="col">Update</th>
+                            <th scope="col">Delete</th>
+                            {% if g.user.roles == "admin" or g.user.roles == "manager" %}
+                             <th scope="col">Update</th>
+                            <th scope="col">Delete</th>
+                            {% endif %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users%}
+                        <tr align="center">
+                            <th scope="row">{{loop.index}}</th>
+                            <td>{{user.username}}</td>
+                            <td>{{user.email}}</td>
+                            <td><button class="btn btn-sm btn-outline-dark">변경</button></td>
+                            <td>{{user.roles}}</td>
+                            <td><button class="btn btn-sm btn-outline-dark">수정</button></td>
+                            <td><button class="btn btn-sm btn-outline-danger">삭제</button></td>
+                            {% if g.user.roles == "admin" or g.user.roles == "manager" %}
+                            {{ url_for('model.delete', shoes_id=i.id) }}
+                            <td><button class="btn btn-sm btn-outline-dark">수정</button></td>
+                            <td><button class="btn btn-sm btn-outline-danger">삭제</button></td>
+                            {% endif %}
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <form method="post" >
+
+                                <td><input type="text" class="form-control" name="username" id="username" value="{{ user.username }}"></td>
+                                <td><input type="email" class="form-control" name="email" id="email" value="{{user.email}}"></td>
+                                <td></td>
+                                <td>
+                                    <select class="custom-select" name="roles" id="roles">
+                                        {% for item in form.roles %}
+                                        <option value={{item.data}}>{{item.label}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td><button onclick="window.location.href='{{ url_for('auth.modify',user_id=user.id) }}" type="submit" class="btn btn-sm btn-outline-dark">변경하기</button></td>
+                                <td><button type="reset" class="btn btn-sm btn-outline-danger">취소하기</button></td>
+                            </form>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <form method="post" class="cc-form" >
+                                {{ form.csrf_token }}
+                            <td><input type="password"  class="form-control" name="password1" id="password1" placeholder="Password"  ></td>
+                            <td><input  class="form-control" type="password"  name="password2" id="password2" placeholder="Password" ></td>
+                                <td colspan="2">
+                                    <button type="submit" class="btn btn-sm btn-outline-dark">변경하기</button>
+                                    <button type="reset" class="btn btn-sm btn-outline-danger">취소하기</button>
+                                </td>
+                            </form>
+                            {% if g.user.roles == "admin" or g.user.roles == "manager" %}
+                            <td></td>
+                            <td></td>
+                            {% endif %}
+
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Property Details Section End -->
+{% endblock %}
+
+{% block script%}
+{% endblock %}

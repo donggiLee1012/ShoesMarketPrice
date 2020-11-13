@@ -1,0 +1,56 @@
+{% extends 'new_template.html' %}
+
+{% block style %}
+#drink-holder select option {
+  display:inline-block;
+}
+{% endblock %}
+
+
+{% block content %}
+
+<!-- Contact Form Section Begin -->
+    <section class="contact-form-section spad">
+        <div class="container" style="min-height:600px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="cf-content" >
+                        <div class="cc-title">
+                            <h4>신발모델 생성폼</h4>
+                        </div>
+                        <form method="post" class="cc-form" id='createform' >
+                            {{ form.csrf_token }}
+                            {% include "form_errors.html" %}
+
+                            <div class="group-input" >
+                                <div id="drink-holder">
+                                    <select class="col-md-2 custom-select custom-select-sm" name="size" id="size">
+                                        {% for item in form.size %}
+                                        <option value={{item.data}}>{{item.label}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <input type="text"name="content" placeholder="Search Keyword" id="content" value="{{ form.content.data or '' }}" style="width:20%; margin-left:1%;">
+
+                                <input type=number name="quantity" placeholder="How many data?" id="quantity" value="{{ form.quantity.data or ''}}">
+
+                            </div>
+
+
+                            <button onclick="$(this).SearchBtn();" type="submit" class="site-btn">Submit</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Contact Form Section End -->
+{% endblock %}
+
+{% block script%}
+<script type="text/javascript">
+
+</script>
+{% endblock %}

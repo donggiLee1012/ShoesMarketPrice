@@ -32,7 +32,7 @@ def create_app():
     app.register_blueprint(shoes_views.bp)
 
     # 필터
-    from .filter import format_datetime, exchange_rate,format_datetime_detail,format_datetime_hour,whattype,integer,maxlength
+    from .filter import format_datetime, exchange_rate,format_datetime_detail,format_datetime_hour,whattype,integer,maxlength,roles
     app.jinja_env.filters['datetime'] = format_datetime
     app.jinja_env.filters['datetime_detail'] = format_datetime_detail
     app.jinja_env.filters['price'] = exchange_rate
@@ -40,7 +40,7 @@ def create_app():
     app.jinja_env.filters['type'] = whattype
     app.jinja_env.filters['int'] = integer
     app.jinja_env.filters['maxstr'] = maxlength
-
+    app.jinja_env.filters['roles'] = roles
 
     # 오류페이지
     app.register_error_handler(404,page_not_found)
