@@ -68,14 +68,6 @@
 
 {% block script%}
 <script type="text/javascript">
-// <![CDATA[
-           function loading(){
-               alert("데이터를 검색합니다.");
-               $("#preloder").show();
-               $("#loaders").show();
-           }
-// ]]>
-
 $.fn.SearchBtn = function() {
         if (confirm('입력 하신내용으로 모델생성및 크롤링을 시작하시겠습니까?')){
         $('#createform').submit();
@@ -85,7 +77,6 @@ $.fn.SearchBtn = function() {
             alert("취소하셨습니다.");
         }
 };
-
 
 $(document).ready(function(){
   $("#img_path").click(function(){

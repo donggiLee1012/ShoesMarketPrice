@@ -18,7 +18,13 @@
                             <div class="hc-inner-text" style="opacity: 0.85;">
                                 <div class="hc-text">
                                     <a href="{{ url_for('platform._list',code=i.code) }}"><h4>{{i.subname}}</h4></a>
-                                    <p class="font-weight-bold text-danger"><span class="fa fa-money">평균가격 : </span> {{(i.platform_price_set | sum(attribute='price') // (i.platform_price_set | length) ) | price}}</p>
+                                    <div class="font-weight-bold text-danger"><span class="fa fa-money"> 플랫폼 평균가격 : </span> {{(i.platform_price_set | sum(attribute='price') // (i.platform_price_set | length) ) | price}}</div>
+                                    {% if( i.sales_set | length ) ==0 %}
+                                    <div class="font-weight-bold text-info"><span class="fa fa-money"> 마켓 평균가격 : </span> 데이터 없음</div>
+                                    {% else %}
+                                    <div class="font-weight-bold text-info"><span class="fa fa-money"> 마켓 평균가격 : </span> {{ (i.sales_set | sum(attribute='price') // i.sales_set | length ) | price }}</div>
+                                    {% endif %}
+
                                     <div class="label" style="background-color:
                     {% if i.brand =='nike'%}#cb2d3e;{%endif%}
                     {% if i.brand =='converse'%}#fc4a1a;{%endif%}
@@ -30,8 +36,9 @@
                                 <div class="hc-widget">
                                     <ul>
                                         <li><i class="fa fa-calendar"></i>{{i.release_date.strftime('%y-%m-%d')}}</li>
-                                        <li><i class="fa fa-database"></i>{{i.platform_price_set | length}}</li>
+                                        <li><a href="{{ url_for('platform._list',code=i.code) }}"><i class="fa fa-database"></i>{{i.platform_price_set | length}}</a></li>
                                         <li><i class="fa fa-won"></i>{{i.retail_price}}</li>
+                                        <li><a href="{{ url_for('market._list',kw=i.keyword) }}"><i class="fa fa-database"></i>{{i.sales_set | length}}</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -146,7 +153,9 @@
                                     <li>거래양 <span>{{ranking.platform_price_set | length}}건</span></li>
                                     <li>출시일 <span>{{ranking.release_date | datetime}}</span></li>
                                 </ul>
-                                <a href="{{url_for('platform._list',code=ranking.code)}}" class="primary-btn">리스트보기</a>
+                                <a href="{{url_for('platform._list',code=ranking.code)}}" class="primary-btn">플랫폼 시세조회</a>
+                                <br>
+                                <a href="{{url_for('market._list',kw=ranking.keyword)}}" class="primary-btn">마켓 시세조회</a>
                             </div>
                         </div>
                     </div>
@@ -180,7 +189,7 @@
                             <a href="{{url_for('market._list')}}"><span>{{marketprice| length}}건</span></a>
                             <br>
                             <span>
-                                {% if g.user.roles == 'admin' or 'manager' %}
+                                {% if g.user.roles == 'admin' or g.user.roles == 'manager' %}
                                 <a target="_blank" href="http://nike-mania.co.kr/">나이키매니아</a>
                                 <a target="_blank" href="https://footsell.com/">풋셀</a>
                                 <a target="_blank" href="https://m.bunjang.co.kr/">번개장터</a>
@@ -200,7 +209,7 @@
                             <a href="{{url_for('market._list')}}"><span>{{modelprice| length}}건</span></a>
                            <br>
                             <span>
-                                {% if g.user.roles == 'admin' or 'manager' %}
+                                {% if g.user.roles == 'admin' or g.user.roles == 'manager' %}
                                 <a target="_blank" href="https://www.xxblue.com/">xxblue</a>
                                  {% else %}
                                 <p><strong>1</strong> web-site crawling</p>

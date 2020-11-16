@@ -76,7 +76,7 @@ class Driver:
         print(self.query_txt,self.size,self.quantity)
 
 
-class Foostsell(Driver):
+class Footsell(Driver):
     target = 'https://footsell.com/g2/bbs/board.php?bo_table=m51&r=ok'
     basetarget = 'https://footsell.com'
     dirname = 'footsell'
@@ -104,8 +104,6 @@ class Foostsell(Driver):
             border_list = soup.find_all(id=re.compile('list_row_'))
 
             if border_list == []:
-                border_list = '결과안잡힘'
-                soup_list.append(border_list)
                 break
 
             if self.query_txt == '':
@@ -173,7 +171,7 @@ class Foostsell(Driver):
                 uri_att = border_list_att.find('a').get('href')
 
                 # img
-                img_att = Foostsell.basetarget + border_list_att.find('img').get('src')
+                img_att = self.basetarget + border_list_att.find('img').get('src')
 
                 if ':' in uploadtime_att:
                     uploadtime_att = datetime.now()

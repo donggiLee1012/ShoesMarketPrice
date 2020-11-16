@@ -13,17 +13,17 @@ class Shoes(db.Model):
     keyword = db.Column(db.Text())
 
 class Marketprice(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
-    title = db.Column(db.String(200),nullable=False)
-    condition = db.Column(db.String(20),default='새상품')
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    condition = db.Column(db.String(20), default='새상품')
     size = db.Column(db.String(30))
-    price = db.Column(db.Integer,default=0)
+    price = db.Column(db.Integer, default=0)
     seller = db.Column(db.String(30))
     upload_date = db.Column(db.DateTime())
     uri = db.Column(db.Text())
     img = db.Column(db.Text())
     search_query = db.Column(db.String(30))
-    shoesmodel_id = db.Column(db.String(30), db.ForeignKey('shoes.id',onupdate='CASCADE'))
+    shoesmodel_id = db.Column(db.String(30), db.ForeignKey('shoes.id', onupdate='CASCADE'))
     shoesmodel = db.relationship('Shoes', backref=db.backref('sales_set'))
 
 class Platformprice(db.Model):

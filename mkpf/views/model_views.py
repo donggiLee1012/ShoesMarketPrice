@@ -8,17 +8,23 @@ from mkpf.views.auth_views import login_required
 import urllib
 import urllib.request
 from datetime import datetime
-
-
+from mkpf.views.market_views import process as mk_process
 
 bp = Blueprint('model',__name__,url_prefix='/model')
 
 @bp.route('/create/', methods=['GET', 'POST'])
+@login_required
 def create():
+
     form = ShoesModelCreateForm()
+
 
     if request.method == 'POST' and form.validate_on_submit():
 
+        if not (g.user.roles == 'admin' or g.user.roles == 'manager'):
+            flash('현재권한으로는 어림도없습니다')
+            return redirect(url_for('model.create'))
+        
         model_path = os.path.join(os.getcwd(), r'mkpf/static/shoesmodels')
         if os.path.exists(model_path):
             pass
@@ -59,9 +65,12 @@ def create():
             model = Shoes(code=code, img=filename, brand=brand,release_date=releasedate,name=name,colorway=color,retail_price=price,keyword=keyword)
             db.session.add(model)
             db.session.commit()
-            howmany = process(code)
 
-            flash(howmany)
+            howmany = process(code)
+            howmany2 = mk_process(keyword)
+
+            flash(howmany + howmany2)
+
 
             return redirect(url_for('model.view'))
         else:
@@ -91,7 +100,7 @@ def view():
 def modify(shoes_id):
     model = Shoes.query.get_or_404(shoes_id)
 
-    if g.user.roles != 'admin' and 'manager':
+    if not (g.user.roles == 'admin' or g.user.roles == 'manager'):
         flash('수정권한이 없습니다')
         return redirect(url_for('model.view'))
     if request.method == 'POST':
@@ -128,14 +137,14 @@ def modify(shoes_id):
             return redirect(url_for('model.view'))
     else:
         form = ShoesModelCreateForm(obj=model)
-    return render_template('model/old_model_create.html', form=form)
+    return render_template('model/model_create.html', form=form)
 
 @bp.route('/delete/<int:shoes_id>')
 @login_required
 def delete(shoes_id):
     question = Shoes.query.get_or_404(shoes_id)
 
-    if g.user.roles != 'admin' and 'manager':
+    if not (g.user.roles == 'admin' or g.user.roles == 'manager') :
         flash('삭제권한이 없습니다')
         return redirect(url_for('model.view'))
     db.session.delete(question)
@@ -190,7 +199,7 @@ def process(code):
 
     db.session.commit()
 
-    return ('찾은값:{} DB에 저장한값:{}'.format(tablenum,num))
+    return ('PlatForm 찾은값:{} DB에 저장한값:{}'.format(tablenum,num))
 
 #----------------------------------------------------
 # ------------------- old version -------------------
