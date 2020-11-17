@@ -1,4 +1,4 @@
-from flask import Blueprint, url_for, request, render_template,flash
+from flask import Blueprint, url_for, request, render_template,flash,g
 from werkzeug.utils import redirect,secure_filename
 from .. import db
 from mkpf.models import Shoes,Marketprice,Platformprice
@@ -15,13 +15,17 @@ def search():
 
     if request.method == 'POST' and form.validate_on_submit():
 
+        if not (g.user.roles == 'admin' or g.user.roles == 'manager'):
+            flash('현재권한으로는 사용할수없습니다..')
+            return redirect(url_for('market.search'))
+
         query_txt = form.content.data
         size = form.size.data
         quantity = form.quantity.data
 
         howmany=process(query_txt,size,quantity)
         flash(howmany)
-        return redirect(url_for('market._list'))
+        return redirect(url_for('market._list',kw=query_txt.strip()))
     else:
         return render_template('market/market_search.html',form=form)
 
@@ -42,7 +46,7 @@ def _list():
 
     #검색
     if kw:
-        search = '%%{}%%'.format(kw)
+        search = '%%{}%%'.format(kw.strip())
         if so == 'expensive':
             shoes_list = Marketprice.query.filter(Marketprice.title.ilike(search) | Marketprice.search_query.ilike(search)).order_by(Marketprice.price.desc())
         elif so == 'popular':
@@ -66,7 +70,7 @@ def detail(shoes_id):
 def process(query_txt,size='',quantity=100):
     total_list=[]
     # FOOTSELL CRAWLING
-    fs = Footsell(query_txt,size,quantity)
+    fs = Footsell(query_txt.strip(),size,quantity)
     fs.start()
     fs.search()
     fs_soup = fs.soup_make()

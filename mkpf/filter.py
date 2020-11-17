@@ -23,6 +23,7 @@ def maxlength(value):
 def whattype(value):
     return type(value)
 
+
 def integer(value):
     if value =='':
         value=0

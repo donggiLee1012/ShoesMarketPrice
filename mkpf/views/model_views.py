@@ -8,8 +8,9 @@ from mkpf.views.auth_views import login_required
 import urllib
 import urllib.request
 from datetime import datetime
+import time as t
 from mkpf.views.market_views import process as mk_process
-
+from mkpf.views.platform_views import process
 bp = Blueprint('model',__name__,url_prefix='/model')
 
 @bp.route('/create/', methods=['GET', 'POST'])
@@ -22,7 +23,7 @@ def create():
     if request.method == 'POST' and form.validate_on_submit():
 
         if not (g.user.roles == 'admin' or g.user.roles == 'manager'):
-            flash('현재권한으로는 어림도없습니다')
+            flash('현재권한으로는 사용할수없습니다.')
             return redirect(url_for('model.create'))
         
         model_path = os.path.join(os.getcwd(), r'mkpf/static/shoesmodels')
@@ -69,7 +70,7 @@ def create():
             howmany = process(code)
             howmany2 = mk_process(keyword)
 
-            flash(howmany + howmany2)
+            flash(howmany +'\n'+ howmany2)
 
 
             return redirect(url_for('model.view'))
@@ -151,55 +152,47 @@ def delete(shoes_id):
     db.session.commit()
     return redirect(url_for('model.view'))
 
-@bp.route('/keyword/')
+@bp.route('/detail/<code>' , methods=['GET', 'POST'])
 @login_required
-def keyword():
-    return render_template('model/model_keyword.html')
+def detail(code):
+    shoes=Shoes.query.filter_by(code=code).first()
+
+    page = request.args.get('page', type=int, default=1)
+    so = request.args.get('so',type=str, default='recent')
+    now = datetime.now()
+    #정렬
+    if so == 'expensive':
+        model_list = Platformprice.query.filter(Platformprice.code.ilike(code)).order_by(Platformprice.price.desc())
+    elif so =='popular':
+        model_list = Platformprice.query.filter(Platformprice.code.ilike(code)).order_by(Platformprice.size.desc())
+    else : #최신수
+        model_list = Platformprice.query.filter(Platformprice.code.ilike(code)).order_by(Platformprice.saleday.desc())
 
 
-def process(code):
-    xxblue_total = []
-    xb = Xxblue(code)
-    xb.start()
-    title,img_name = xb.search()
-    tablenum = xb.element_generate()
-    xb_obj = xb.parser()
-    search_date = datetime.now()
-    xb.driver.quit()
+    model_list = model_list.paginate(page, per_page=10)
 
-    print('subname:',title)
-    # 모델 서브네임이없을 경우 추가한다.
-    shoesmodel = Shoes.query.filter(Shoes.code ==code).first()
-    if shoesmodel.subname == None:
-        shoesmodel.subname = title
+    search_date = Platformprice.query.filter(Platformprice.code.ilike(code)).order_by(Platformprice.search_date.desc()).first()
+    if search_date.search_date is None:
+        search_date = Platformprice.query.filter(Platformprice.code.ilike(code)).order_by(Platformprice.saleday.desc()).first().saleday
+    else :
+        search_date = search_date.search_date
 
-    num = 0
-    # 중복값 비교
-    comparison = Platformprice.query.filter(Platformprice.code.like(code)).order_by(Platformprice.id.desc()).first()
+    if request.method == 'POST':
+        start = t.time()
+        howmany = process(code)
+        checktime = t.time()
+        hw=mk_process(shoes.keyword)
 
-    if '없음' in xb_obj[0][0]:
-        pass
-    else:
-        for i in xb_obj:
+        flash(howmany+'\n'+hw)
 
-            size = i[0]
-            price = int(i[1].replace(',', '').replace('원', ''))
-            saleday = datetime.strptime(i[2], '%Y.%m.%d')
-            # comparison 기존데이터 유무
-            if comparison != None :
-                if comparison.code == code and comparison.saleday ==saleday and comparison.price == price :
-                    break
-                else:
-                    pass
-            else : pass
-            xxblue_total.insert(0, Platformprice(code=code,saleday=saleday,price=price,size=size,search_date=search_date))
-            num +=1
+        return redirect(url_for('model.detail',code=code))
 
-        db.session.bulk_save_objects(xxblue_total)
+    return render_template('model/model_detail.html',shoes=shoes,model_list=model_list,page=page,so=so,code=code,search_date=search_date,now=now)
 
-    db.session.commit()
 
-    return ('PlatForm 찾은값:{} DB에 저장한값:{}'.format(tablenum,num))
+
+
+
 
 #----------------------------------------------------
 # ------------------- old version -------------------

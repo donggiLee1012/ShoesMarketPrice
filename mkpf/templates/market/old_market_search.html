@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block style %}
+div#loading {
+width: 50px;
+height: 50px;
+display: none;
+text-align : center;
+background: url(/static/ajax-loader.gif) no-repeat;
+cursor: wait;
+}
+{% endblock %}
+{% block content %}
+<div class="container my-3 center">
+    <div class="py-5 text-center">
+        <h3>신발검색페이지</h3>
+        <p>
+        </p>
+    </div>
+    <div id="loading"></div>
+    <div class="jumbotron text-center " id="mains">
+        <form method="post" class="post-form my-2">
+            {{ form.csrf_token }}
+            {% include "form_errors.html" %}
+
+
+            <div class="form-group">
+                <label class="col-md-3" for="size">사이즈를 선택하세요 : </label>
+                <select class="col-md-2 custom-select custom-select-sm" name="size" id="size">
+                    {% for item in form.size %}
+                    <option value={{item.data}}>{{item.label}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3" for="content">검색하실 신발을 입력하세요 : </label>
+                <input class="col-md-2" type="text" name="content" id="content" value="{{ form.content.data or ''}}">
+            </div>
+            <div class="form-group">
+                <label class="col-md-3" for="quantity">건수를 입력하세요 : </label>
+                <input class="col-md-2" type=number name="quantity" id="quantity" value="{{ form.quantity.data or ''}}">
+            </div>
+
+
+            <br>
+            <button onclick="loading();" type="submit"{% if not g.user %}disabled {% endif %} class="col-md-2 btn btn-secondary">{% if not g.user %}로그인후사용{% else %}검색하기{% endif %}</button>
+            <button type="reset" class="col-md-2 btn btn-secondary">초기화</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block script%}
+<script type="text/javascript">
+// <![CDATA[
+           function loading(){
+               alert("데이터를 찾으시겠습니까?");
+               $("#loading").show();
+               $("#mains").hide();
+           }
+// ]]>
+</script>
+{% endblock %}

@@ -1,8 +1,9 @@
-from flask import Blueprint, url_for,render_template
+from flask import Blueprint, url_for,render_template,flash,g
 from sqlalchemy import func
 from werkzeug.utils import redirect
 from mkpf.models import Shoes,Platformprice,Marketprice,User
-
+from flask import request
+from .market_views import process
 from ..forms import SearchShoes
 from .. import db
 
@@ -19,25 +20,29 @@ def mange():
 
 @bp.route('/test')
 def test():
-    # user = User.query.get_or_404()
-    # db.session.delete(user)
-    # db.session.commit()
     form = SearchShoes()
 
+    return render_template('market/market_search.html',form=form)
 
-    return render_template('market/market_search2.html',form=form)
 
 
-@bp.route('/test2')
-def ttt():
-    # shoes = Shoes.query.filter_by(code = 'DA1469-200').first()
+@bp.route('/test2',methods=('GET','POST'))
+def test2():
+    form = SearchShoes()
 
-    # db.session.query(Marketprice).delete()
-    # db.session.commit()
-    # #
-    # word = Shoes.query.filter(Shoes.keyword.ilike('%%러버덩크 골드%%')).first()
+    if request.method == 'POST' and form.validate_on_submit():
 
-    word =123
+        if not (g.user.roles == 'admin' or g.user.roles == 'manager'):
+            flash('현재권한으로는 사용할수없습니다..')
+            return redirect(url_for('main.test2'))
 
-    return render_template('test/tests.html',word=word)
+        query_txt = form.content.data
+        size = form.size.data
+        quantity = form.quantity.data
+
+        howmany = process(query_txt, size, quantity)
+        flash(howmany)
+        return redirect(url_for('market._list'))
+
+    return render_template('market/market_search.html',form=form)
 

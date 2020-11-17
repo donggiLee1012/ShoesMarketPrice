@@ -115,10 +115,16 @@
                                         <li><a href="{{url_for('model.view')}}">모델 리스트</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="#">Market</a>
+                                <li><a href="#">Find</a>
                                     <ul class="dropdown">
-                                        <li><a href="{{url_for('market._list')}}">마켓 리스트</a></li>
-                                        <li><a href="{{url_for('market.search')}}">마켓 시세 조회</a></li>
+                                        <li><a href="#">플랫폼 시세 찾기</a></li>
+                                        <li><a href="{{url_for('market.search')}}">마켓 시세 찾기</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#">View</a>
+                                    <ul class="dropdown">
+                                        <li><a href="{{url_for('platform._list')}}">플랫폼 시세 조회</a></li>
+                                        <li><a href="{{url_for('market._list')}}">마켓 시세 조회</a></li>
                                     </ul>
                                 </li>
                                 <li><a href="#">About</a></li>

@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+{% include "success.html" %}
+<div class="container my-3">
+    <div class="row justify-content-between my-3">
+        <div class="col-2">
+            <select class="form-control so">
+                <option value="recent" {% if so=='recent' %}selected{% endif %}>최신순</option>
+                <option value="expensive" {% if so=='expensive' %}selected{% endif %}>가격순</option>
+                <option value="popular" {% if so=='popular' %}selected{% endif %}>사이즈순</option>
+            </select>
+        </div>
+        <div class="col-4 input-group">
+            <input type="text" class="form-control kw" onkeyup="enterkey();" value="{{ kw or '' }} ">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="btn_search">찾기</button>
+            </div>
+        </div>
+    </div>
+
+    <table class="table">
+
+        <thead>
+        <tr class="thead-dark">
+            <th>번호</th>
+            <th>사이즈</th>
+            <th>상태</th>
+            <th style="width:50%">제목</th>
+            <th>가격</th>
+            <th>작성일시</th>
+        </tr>
+        </thead>
+        <tbody {% if not g.user %}hidden {% endif %}>
+        {% if shoes_list %}
+
+        {% for shoes in shoes_list.items %}
+        <tr>
+            <td>{{ shoes_list.total - ((shoes_list.page-1) * shoes_list.per_page) - loop.index0 }}</td>
+            <td>{{shoes.size}}</td>
+            <td>{{shoes.condition}}</td>
+            <td>{{shoes.title}}</td>
+            <td>{{shoes.price |price}}</td>
+            <td>{{shoes.upload_date|datetime}}</td>
+        </tr>
+        {% endfor %}
+
+        {% else %}
+        <tr>
+            <td colspan="3">데이터가 없습니다.</td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+    <!-- 페이징처리 시작 -->
+    {% if not g.user %}
+    <div class="jumbotron">
+    <h1 class="text-center">로그인후 이용부탁드립니다.</h1>
+  </div>
+    {% endif %}
+    <ul class="pagination justify-content-center thead-dark">
+        <!-- 이전페이지 -->
+        {% if shoes_list.has_prev %}
+        <li class="page-item ">
+            <a class="page-link" data-page="{{ shoes_list.prev_num }}" href="#">이전</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+        </li>
+        {% endif %}
+        {% for page_num in shoes_list.iter_pages() %}
+            {% if page_num %}
+                {% if page_num != shoes_list.page %}
+                <li class="page-item ">
+                    <a class="page-link" data-page="{{ page_num }}" href="#">{{ page_num }}</a>
+                </li>
+                {% else %}
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="#">{{ page_num }}</a>
+                </li>
+                {% endif %}
+           {% else %}
+                <li class="disabled">
+                    <a class="page-link" href="#">...</a>
+                </li>
+           {% endif %}
+        {% endfor %}
+        <!-- 다음페이지 -->
+        {% if shoes_list.has_next %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ shoes_list.next_num }}" href="#">다음</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+        {% endif %}
+    </ul>
+    <!-- 페이징처리 끝 -->
+
+</div>
+<form id="searchForm" method="get" action="{{ url_for('market._list') }}">
+    <input type="hidden" id="kw" name="kw" value="{{ kw or '' }}">
+    <input type="hidden" id="page" name="page" value="{{ page }}">
+    <input type="hidden" id="so" name="so" value="{{ so }}">
+</form>
+
+{% endblock %}
+{% block script%}
+<script type='text/javascript'>
+
+// <![CDATA[
+           function loading(){
+               alert("데이터를 찾으시겠습니까?");
+               $("#loading").show();
+               $("#content").hide();
+           }
+// ]]>
+
+
+function enterkey() {
+        if (window.event.keyCode == 13) {
+             // 엔터키가 눌렸을 때 실행할 내용
+             btn_search.click();
+        }
+}
+
+
+$(document).ready(function(){
+    $(".page-link").on('click', function() {
+        $("#page").val($(this).data("page"));
+        $("#searchForm").submit();
+    });
+    $("#btn_search").on('click', function() {
+        $("#kw").val($(".kw").val());
+        $("#page").val(1);  // 검색버튼을 클릭할 경우 1페이지부터 조회한다.
+        $("#searchForm").submit();
+    });
+    $(".so").on('change', function() {
+        $("#so").val($(this).val());
+        $("#page").val(1);
+        $("#searchForm").submit();
+    });
+
+});
+</script>
+{% endblock %}

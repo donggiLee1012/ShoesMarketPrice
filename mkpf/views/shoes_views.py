@@ -24,6 +24,14 @@ def main():
     modelprice = Platformprice.query.all()
     marketprice = Marketprice.query.all()
 
+    # 마켓상품중 가격 만원 이하 or 2백만원 이상제품 필터링
+    for shoe in model :
+        for index,value in enumerate(shoe.sales_set):
+            if value.price < 100000:
+                del shoe.sales_set[index]
+            elif value.price > 2000000:
+                del shoe.sales_set[index]
+
     # 인기모델 9 제품
     best9 = Platformprice.query.order_by(func.count(Platformprice.id).desc()).group_by(Platformprice.code).limit(
         10).all()

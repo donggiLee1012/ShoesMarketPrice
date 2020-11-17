@@ -1,6 +1,9 @@
 {% extends 'new_template.html' %}
 
 {% block style %}
+
+
+
 {% endblock %}
 
 
@@ -17,7 +20,7 @@
                         <div class="col-lg-12">
                             <div class="hc-inner-text" style="opacity: 0.85;">
                                 <div class="hc-text">
-                                    <a href="{{ url_for('platform._list',code=i.code) }}"><h4>{{i.subname}}</h4></a>
+                                    <a href="{{ url_for('model.view',_anchor=i.code) }}"><h4>{{i.subname}}</h4></a>
                                     <div class="font-weight-bold text-danger"><span class="fa fa-money"> 플랫폼 평균가격 : </span> {{(i.platform_price_set | sum(attribute='price') // (i.platform_price_set | length) ) | price}}</div>
                                     {% if( i.sales_set | length ) ==0 %}
                                     <div class="font-weight-bold text-info"><span class="fa fa-money"> 마켓 평균가격 : </span> 데이터 없음</div>
@@ -36,9 +39,9 @@
                                 <div class="hc-widget">
                                     <ul>
                                         <li><i class="fa fa-calendar"></i>{{i.release_date.strftime('%y-%m-%d')}}</li>
-                                        <li><a href="{{ url_for('platform._list',code=i.code) }}"><i class="fa fa-database"></i>{{i.platform_price_set | length}}</a></li>
+                                        <li><a class="text-danger" href="{{ url_for('model.detail',code=i.code) }}"><i class="fa fa-database text-danger"></i>{{i.platform_price_set | length}}</a></li>
                                         <li><i class="fa fa-won"></i>{{i.retail_price}}</li>
-                                        <li><a href="{{ url_for('market._list',kw=i.keyword) }}"><i class="fa fa-database"></i>{{i.sales_set | length}}</a></li>
+                                        <li><a class="text-info" href="{{ url_for('market._list',kw=i.keyword) }}"><i class="fa fa-database text-info"></i>{{i.sales_set | length}}</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -153,7 +156,7 @@
                                     <li>거래양 <span>{{ranking.platform_price_set | length}}건</span></li>
                                     <li>출시일 <span>{{ranking.release_date | datetime}}</span></li>
                                 </ul>
-                                <a href="{{url_for('platform._list',code=ranking.code)}}" class="primary-btn">플랫폼 시세조회</a>
+                                <a href="{{url_for('model.detail',code=ranking.code)}}" class="primary-btn">플랫폼 시세조회</a>
                                 <br>
                                 <a href="{{url_for('market._list',kw=ranking.keyword)}}" class="primary-btn">마켓 시세조회</a>
                             </div>
@@ -206,7 +209,7 @@
                         <div class="ts-text">
                             <img src="{{ url_for('static',filename='source/img/cash-on-delivery.svg')}}" alt="">
                             <h5>PlatForm</h5>
-                            <a href="{{url_for('market._list')}}"><span>{{modelprice| length}}건</span></a>
+                            <a href="{{url_for('platform._list')}}"><span>{{modelprice| length}}건</span></a>
                            <br>
                             <span>
                                 {% if g.user.roles == 'admin' or g.user.roles == 'manager' %}

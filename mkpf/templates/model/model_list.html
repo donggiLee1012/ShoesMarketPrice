@@ -27,8 +27,8 @@ opacity: 1;
 
     <!-- Property Section Begin -->
 
-
     <section class="property-section latest-property-section spad">
+        {% include "success.html" %}
         <div class="container">
             <div class="row">
 
@@ -42,8 +42,8 @@ opacity: 1;
                 </div>
                 <div class="col-lg-6">
                     <div class="property-controls">
-                        <ul>
-                            <li data-filter="all">All</li>
+                        <ul id="category">
+                            <li style="background-color:#00C89E; color:white;" data-filter="all">All</li>
                             <li data-filter=".nike">nike</li>
                             <li data-filter=".jordan">jordan</li>
                             <li data-filter=".adidas">adidas</li>
@@ -55,7 +55,7 @@ opacity: 1;
             </div>
             <div class="row property-filter">
                 {% for item in items%}
-                <div class="col-lg-4 col-md-6 mix all {{item.brand}}" style="margin-bottom:10px;">
+                <div class="col-lg-4 col-md-6 mix all {{item.brand}}" id="{{item.code}}" style="margin-bottom:10px;">
                     <div class="property-item content">
                         <div class="pi-pic set-bg " data-setbg="{{url_for('static',filename='shoesmodels/'+item.img )}}">
                             <div class='overlay' style="background-color:
@@ -65,7 +65,7 @@ opacity: 1;
                     {% if item.brand =='newbalance'%}#bdc3c7;{%endif%}
                     {% if item.brand =='jordan'%}#DECBA4;{%endif%}">
                                 <div class="text-center" style="padding-top:25%;">
-                                <a href="{{ url_for('platform._list',code=item.code) }}" class="btn btn-light font-weight-normal">view</a>
+                                <a href="{{ url_for('model.detail',code=item.code) }}" class="btn btn-light font-weight-normal" style="color:#666666;">view</a>
                                 </div>
                                 {% if g.user.roles == 'admin' or g.user.roles == 'manager' %}
                                 <div class="text-center" style="padding-top:5%;">
@@ -120,4 +120,43 @@ opacity: 1;
 {% endblock %}
 
 {% block script%}
+<script type='text/javascript'>
+$("#category li").on('click', function() {
+        var select = $(this).data('filter');
+        $('#test').val(select);
+
+        if (select =='.nike'){
+            $("#category li").css('background-color', 'transparent');
+            $("#category li").css('color', '#666666');
+            $(this).css('background-color', '#cb2d3e');
+            $(this).css('color', 'white');
+        } else if (select =='.jordan'){
+            $("#category li").css('background-color', 'transparent');
+            $("#category li").css('color', '#666666');
+            $(this).css('background-color', '#DECBA4');
+            $(this).css('color', 'white');
+        } else if (select =='.adidas'){
+            $("#category li").css('background-color', 'transparent');
+            $("#category li").css('color', '#666666');
+            $(this).css('background-color', '#6A82FB');
+            $(this).css('color', 'white');
+        } else if (select =='.converse'){
+            $("#category li").css('background-color', 'transparent');
+            $("#category li").css('color', '#666666');
+            $(this).css('background-color', '#fc4a1a');
+            $(this).css('color', 'white');
+        } else if (select =='.newbalance'){
+            $("#category li").css('background-color', 'transparent');
+            $("#category li").css('color', '#666666');
+            $(this).css('background-color', '#bdc3c7');
+            $(this).css('color', 'white');
+        } else if (select =='all'){
+            $("#category li").css('background-color', 'transparent');
+            $("#category li").css('color', '#666666');
+            $(this).css('background-color', '#00C89E');
+            $(this).css('color', 'white');
+        }
+
+    });
+</script>
 {% endblock %}
