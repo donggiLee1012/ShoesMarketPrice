@@ -20,6 +20,14 @@ bp = Blueprint('shoes',__name__,url_prefix='/shoes')
 
 @bp.route('/main')
 def main():
+    today = datetime.now().strftime('%Y-%m-%d')
+    ll = os.listdir('mkpf/static/wordcloud/wc')
+    wc_list = list()
+    for i in ll :
+        if today in i:
+            wc_list.append(i)
+
+
     model = Shoes.query.all()
     modelprice = Platformprice.query.all()
     marketprice = Marketprice.query.all()
@@ -42,7 +50,7 @@ def main():
 
         topnine.append(topnine_obj)
 
-    return render_template('shoes/main.html',topnine=topnine,model=model,modelprice=modelprice,marketprice=marketprice)
+    return render_template('shoes/main.html',topnine=topnine,model=model,modelprice=modelprice,marketprice=marketprice,today=today,wc_list=wc_list)
 
 #----------------------------------------------------
 # ------------------- old version -------------------

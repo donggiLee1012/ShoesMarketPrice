@@ -26,7 +26,7 @@ if __name__ =='__main__':
 
     proces = []
     #('','',quantity = 크롤링갯수 나중에 저장소에서 설정값 가져오도록 변경)
-    namaes = Nikemania('','',30)
+    namaes = Nikemania('','',100)
 
     for i in Nikemania.brands:
         proc = Process(target=namaes.logics, args=(i,final_dict))
@@ -36,8 +36,8 @@ if __name__ =='__main__':
     for proc in proces:
         proc.join()
 
-    save = os.path.dirname(os.path.dirname(namaes.imgpath))
-    jsonfile = os.path.join(save,f'nikemania{namaes.time_marker}')
+    save = namaes.imgpath
+    jsonfile = os.path.join(save,f'{namaes.time_marker}nikemania')
 
     with open(f"{jsonfile}.json", "w", encoding='utf-8') as json_file:
         json.dump(final_dict.copy(), json_file, ensure_ascii=False)

@@ -10,6 +10,7 @@
 {% block content %}
     <!-- 슬라이드쇼 Begin -->
 <section class="hero-section">
+    <img src="{{url_for('static',filename='wordcloud/wordcloud.svg')}}">
         <div class="container">
             <div class="hs-slider owl-carousel">
                 <!--                반복시작-->
@@ -260,20 +261,38 @@
     </section>
     <!-- 브랜드별모델 End -->
 
-    <!-- 미구현 Begin -->
-    <section class="search-section spad">
+<!-- Today's Cafe Topic 시작 -->
+    <section class="feature-property-section spad">
         <div class="container">
             <div class="row">
-                <div class="col-lg-7">
-                    <div class="section-title">
-                        <h4>미구현</h4>
+                <div class="col-lg-2 p-0">
+                    <div class="feature-property-left">
+                        <div class="section-title">
+                            <h4>Today's Cafe Topic</h4>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-10 p-0">
+                    <div class="fp-slider owl-carousel">
+                        {% for wc in wc_list %}
+                        <div class="fp-item set-bg" data-setbg="{{url_for('static',filename='wordcloud/wc/'+wc)}}">
+                            <div class="fp-text">
+                                <p></p>
+                                <div class="label" style="text-shadow: 1px 1px #000000;
+                    background-color : {% if 'nike' in wc %}#cb2d3e;{%endif%}
+                    {% if 'other'in wc %}#fc4a1a;{%endif%}
+                    {% if 'adidas' in wc%}#6A82FB;{%endif%}
+                    {% if 'jordan' in wc %}#DECBA4;{%endif%}">{{wc[:-4]}}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
-    <!-- 미구현 End -->
+    <!-- Today's Cafe Topic End -->
 
 
 

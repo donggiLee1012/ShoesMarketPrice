@@ -24,7 +24,7 @@ def test():
 
     return render_template('market/market_search.html',form=form)
 
-
+    
 
 @bp.route('/test2',methods=('GET','POST'))
 def test2():
