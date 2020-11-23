@@ -55,7 +55,8 @@
 		+ Konlpy
 			> Komoran
 		+ multiprocessing
-	+ SQLite3
+		+ SQLAlchemy
+			> SQLite3
 + ### Server 
 	+ __Ubuntu 18.04 LTS ( Linux )__
 	
