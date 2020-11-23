@@ -59,7 +59,7 @@
 			> SQLite3
 + ### Server 
 	+ __Ubuntu 18.04 LTS ( Linux )__
-	
+		> vim
 	+ Google Cloud Platform
 		> Gunicorn
 		>
